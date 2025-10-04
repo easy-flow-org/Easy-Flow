@@ -9,10 +9,10 @@ const StyledToolbar = styled(Toolbar)({
 })
 //
 
-export default function Nav() {
+export default function HeroNav() {
   return (
     <>
-      <AppBar position="sticky">
+      <AppBar position="static">
         <StyledToolbar>
           <LightbulbIcon sx={{ display: { xs: "block", sm: "none" }, alignItems: "center", height: "2rem", width: "2rem" }}></LightbulbIcon>
           <Typography variant="h6" flexShrink={0} sx={{ display: { xs: "none", sm: "block" } }}>Easy Flow</Typography>
