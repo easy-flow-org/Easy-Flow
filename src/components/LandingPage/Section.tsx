@@ -2,8 +2,7 @@ import { styled } from "@mui/material"
 import type { PropsWithChildren } from "react"
 
 const StyledSection = styled("section")(({ theme }) => ({
-  width: "100vw",
-  height: "100vh",
+  minHeight: "100vh",   // prefer minHeight so it grows if child content needs more
 }))
 
 // Props with children allow us to pass children ele in Section
