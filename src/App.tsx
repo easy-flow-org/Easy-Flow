@@ -1,9 +1,12 @@
-import HeroSection from "./components/LandingPage/HeroSection/HeroSection"
+import Hero from "./components/LandingPage/HeroSection/Hero"
+import Section from "./components/LandingPage/Section"
 
 function App() {
   return (
     <>
-     <HeroSection /> 
+      <Section>
+        <Hero /> 
+      </Section>
     </>
   )
 }
