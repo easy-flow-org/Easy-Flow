@@ -6,7 +6,3 @@
   box-sizing: border-box !important;
   /* outline: .5px red solid; */
 }
-
-:root {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}

@@ -1,6 +1,6 @@
 import { Button, Container, Grid, Stack, styled, Typography } from "@mui/material";
 import HeroNav from "./HeroNav";
-import { theme } from "../../theme";
+import { theme } from "../../../theme";
 
 // Defining Custom Styled Components Here
 const StyledGrid = styled(Grid)(({ theme }) => ({
