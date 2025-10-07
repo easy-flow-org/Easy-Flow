@@ -10,7 +10,7 @@ const StyledToolbar = styled(Toolbar)({
 })
 //
 
-export default function HeroNav() {
+export default function AboutMeNav() {
   return (
     <>
       <AppBar position="static">
@@ -19,8 +19,8 @@ export default function HeroNav() {
           <Typography variant="h6" flexShrink={0} sx={{ display: { xs: "none", sm: "block" } }}>Easy Flow</Typography>
 
           <Stack direction={"row"} spacing={"3rem"} flexShrink={0} marginLeft={"auto"} marginRight={"2rem"}>
+            <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>Home</Link>
             <Link to="/features" style={{ color: 'inherit', textDecoration: 'none' }}>Features</Link>
-            <Link to="/about-us" style={{ color: 'inherit', textDecoration: 'none' }}>About Us</Link>
           </Stack>
 
           <Stack direction={"row"} spacing={"1rem"} flexShrink={0}>
