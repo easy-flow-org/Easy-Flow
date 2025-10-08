@@ -1,5 +1,4 @@
-import { AppBar, Button, Stack, Toolbar, Typography, styled } from "@mui/material";
-import { Link } from 'react-router-dom';
+import { AppBar, Button, Link, Stack, Toolbar, Typography, styled } from "@mui/material";
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
 
 // Defining Custom Styled Components Here
@@ -19,8 +18,8 @@ export default function HeroNav() {
           <Typography variant="h6" flexShrink={0} sx={{ display: { xs: "none", sm: "block" } }}>Easy Flow</Typography>
 
           <Stack direction={"row"} spacing={"3rem"} flexShrink={0} marginLeft={"auto"} marginRight={"2rem"}>
-            <Link to="/features" style={{ color: 'inherit', textDecoration: 'none' }}>Features</Link>
-            <Link to="/about-us" style={{ color: 'inherit', textDecoration: 'none' }}>About Us</Link>
+            <Link href="features" color="inherit" variant="inherit" underline="none">Features</Link>
+            <Link href="about-us" color="inherit" variant="inherit" underline="none">About Us</Link>
           </Stack>
 
           <Stack direction={"row"} spacing={"1rem"} flexShrink={0}>
