@@ -8,14 +8,14 @@ export default function Feature1() {
       <Stack
         direction={"column"}
         sx={{
-          padding: "5rem 1rem 5rem 1rem",
+          padding: "2.5rem 1rem 5rem 1rem",
           backgroundColor: "whitesmoke",
         }}
       >
         <Typography variant="h4" align="center">
           Keep Up Effortlessly
         </Typography>
-        <Stack direction={"row"} justifyContent={"center"} marginTop={2} flexWrap={"wrap"} gap={3}>
+        <Stack direction={"row"} justifyContent={"center"} marginTop={4} flexWrap={"wrap"} gap={3}>
           <Card sx={{ minWidth: cardMaxWidth }}>
             <CardContent>
               <Typography variant="h6" align={"center"}>
