@@ -1,16 +1,77 @@
-import { Grid, Stack, Typography } from "@mui/material";
+import { Stack, Typography, Card, CardContent, Box } from "@mui/material";
 
 export default function Feature1() {
+  const cardMaxWidth = "330px";
+
   return (
     <>
-      <Grid container spacing={2} sx={{ backgroundColor: "whitesmoke" , padding: {xs: "2rem", md: "5rem 1rem 5rem 5rem", lg: "10rem 2rem 10rem 10rem"}, }}>
-        <Grid size={5}>
-          <Stack direction={"column"} gap={2}>
-            <Typography variant="h4">Lorem</Typography>
-            <Typography variant="subtitle1">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Molestiae saepe dolore praesentium. Aut, sit. Doloremque modi ea rem, incidunt suscipit doloribus maxime natus error eaque, recusandae commodi animi sed sit?</Typography>
-          </Stack>
-        </Grid>
-      </Grid>
+      <Stack
+        direction={"column"}
+        sx={{
+          padding: "5rem 1rem 5rem 1rem",
+          backgroundColor: "whitesmoke",
+        }}
+      >
+        <Typography variant="h4" align="center">
+          Keep Up Effortlessly
+        </Typography>
+        <Stack direction={"row"} justifyContent={"center"} marginTop={2} flexWrap={"wrap"} gap={3}>
+          <Card sx={{ minWidth: cardMaxWidth }}>
+            <CardContent>
+              <Typography variant="h6" align={"center"}>
+                Import Your Syllabus in Seconds
+              </Typography>
+              <Typography variant="subtitle1" align={"center"}>
+                Send class deadlines to your calendar.
+              </Typography>
+              <Box
+                sx={{ backgroundColor: "whitesmoke" }}
+                height={300}
+                width={300}
+                borderRadius={2}
+                margin={"auto"}
+                marginTop={1}
+              ></Box>
+            </CardContent>
+          </Card>
+          <Card sx={{ minWidth: cardMaxWidth }}>
+            <CardContent>
+              <Typography variant="h6" align={"center"}>
+                Stay on Top of Every Task
+              </Typography>
+              <Typography variant="subtitle1" align={"center"}>
+                All your notes and to-dos in one place.
+              </Typography>
+              <Box
+                sx={{ backgroundColor: "whitesmoke" }}
+                height={300}
+                width={300}
+                borderRadius={2}
+                margin={"auto"}
+                marginTop={1}
+              ></Box>
+            </CardContent>
+          </Card>
+          <Card sx={{ minWidth: cardMaxWidth }}>
+            <CardContent>
+              <Typography variant="h6" align={"center"}>
+                Focus Without Distractions
+              </Typography>
+              <Typography variant="subtitle1" align={"center"}>
+                Block noise, lock in, and get work done.
+              </Typography>
+              <Box
+                sx={{ backgroundColor: "whitesmoke" }}
+                height={300}
+                width={300}
+                borderRadius={2}
+                margin={"auto"}
+                marginTop={1}
+              ></Box>
+            </CardContent>
+          </Card>
+        </Stack>
+      </Stack>
     </>
-  )
+  );
 }
