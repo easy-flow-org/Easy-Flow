@@ -8,7 +8,7 @@ export default function Feature1() {
       <Stack
         direction={"column"}
         sx={{
-          padding: "2.5rem 1rem 5rem 1rem",
+          padding: "4rem 1rem 7rem 1rem",
           backgroundColor: "whitesmoke",
         }}
       >
