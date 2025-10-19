@@ -21,7 +21,7 @@ export default function Feature1() {
               <Typography variant="h6" align={"center"}>
                 Import Your Syllabus in Seconds
               </Typography>
-              <Typography variant="subtitle1" align={"center"}>
+              <Typography variant="body1" color="text.secondary" align={"center"}>
                 Send class deadlines to your calendar.
               </Typography>
               <Box
@@ -39,7 +39,7 @@ export default function Feature1() {
               <Typography variant="h6" align={"center"}>
                 Stay on Top of Every Task
               </Typography>
-              <Typography variant="subtitle1" align={"center"}>
+              <Typography variant="body1" color="text.secondary" align={"center"}>
                 All your notes and to-dos in one place.
               </Typography>
               <Box
@@ -57,7 +57,7 @@ export default function Feature1() {
               <Typography variant="h6" align={"center"}>
                 Focus Without Distractions
               </Typography>
-              <Typography variant="subtitle1" align={"center"}>
+              <Typography variant="body1" color="text.secondary" align={"center"}>
                 Block noise, lock in, and get work done.
               </Typography>
               <Box
