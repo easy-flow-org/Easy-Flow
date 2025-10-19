@@ -16,15 +16,15 @@ export default function Feature2() {
     },
     {
       title: "Built for students, loved by achievers",
-      desc: "Everything you need to stay organized and on top of your game.",
+      desc: "Everything you need to stay on top and organized.",
     },
   ].map((item) => (
     <Grid size={6}>
-      <Card sx={{ padding: ".5rem", height: "100%", }}>
-        <Typography variant="h6" sx={{ fontWeight: 600, marginBottom: 1.5 }}>
+      <Card sx={{ padding: ".5rem", height: "100%"}}>
+        <Typography variant="h6" align="center" sx={{ fontWeight: 600, marginBottom: 1.5 }}>
           {item.title}
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" align="center" color="text.secondary">
           {item.desc}
         </Typography>
       </Card>
@@ -36,10 +36,10 @@ export default function Feature2() {
       <Grid
         container
         sx={{
-          padding: "4rem 1rem 7rem 1rem",
+          padding: "3rem 6rem 14rem 6rem",
           backgroundColor: "whitesmoke",
         }}
-        spacing={3}
+        spacing={4}
       >
         <Grid size={12}>
           <Typography variant="h4" align="center">
