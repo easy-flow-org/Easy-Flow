@@ -1,7 +1,9 @@
 import { Stack, Typography, Card, CardContent, Box } from "@mui/material";
 
 export default function Feature1() {
-  const cardMaxWidth = "330px";
+  const cardMinWidth = { xs: 230, sm: 330 };
+  const previewBoxSizes = { xs: 230, sm: 330 };
+  const previewBoxMargins = { xs: "auto" };
 
   return (
     <>
@@ -16,7 +18,7 @@ export default function Feature1() {
           Keep Up Effortlessly
         </Typography>
         <Stack direction={"row"} justifyContent={"center"} marginTop={4} flexWrap={"wrap"} gap={3}>
-          <Card sx={{ minWidth: cardMaxWidth }}>
+          <Card sx={{ minWidth: cardMinWidth }}>
             <CardContent>
               <Typography variant="h6" align={"center"}>
                 Import Your Syllabus in Seconds
@@ -25,16 +27,19 @@ export default function Feature1() {
                 Send class deadlines to your calendar.
               </Typography>
               <Box
-                sx={{ backgroundColor: "whitesmoke" }}
-                height={300}
-                width={300}
-                borderRadius={2}
-                margin={"auto"}
-                marginTop={1}
+                sx={{
+                  bgcolor: "whitesmoke",
+                  height: previewBoxSizes,
+                  width: previewBoxSizes,
+                  borderRadius: 2,
+                  mx: previewBoxMargins,
+                  mb: previewBoxMargins,
+                  mt: 1,
+                }}
               ></Box>
             </CardContent>
           </Card>
-          <Card sx={{ minWidth: cardMaxWidth }}>
+          <Card sx={{ minWidth: cardMinWidth }}>
             <CardContent>
               <Typography variant="h6" align={"center"}>
                 Stay on Top of Every Task
@@ -43,16 +48,19 @@ export default function Feature1() {
                 All your notes and to-dos in one place.
               </Typography>
               <Box
-                sx={{ backgroundColor: "whitesmoke" }}
-                height={300}
-                width={300}
-                borderRadius={2}
-                margin={"auto"}
-                marginTop={1}
+                sx={{
+                  bgcolor: "whitesmoke",
+                  height: previewBoxSizes,
+                  width: previewBoxSizes,
+                  borderRadius: 2,
+                  mx: previewBoxMargins,
+                  mb: previewBoxMargins,
+                  mt: 1,
+                }}
               ></Box>
             </CardContent>
           </Card>
-          <Card sx={{ minWidth: cardMaxWidth }}>
+          <Card sx={{ minWidth: cardMinWidth }}>
             <CardContent>
               <Typography variant="h6" align={"center"}>
                 Focus Without Distractions
@@ -61,12 +69,15 @@ export default function Feature1() {
                 Block noise, lock in, and get work done.
               </Typography>
               <Box
-                sx={{ backgroundColor: "whitesmoke" }}
-                height={300}
-                width={300}
-                borderRadius={2}
-                margin={"auto"}
-                marginTop={1}
+                sx={{
+                  bgcolor: "whitesmoke",
+                  height: previewBoxSizes,
+                  width: previewBoxSizes,
+                  borderRadius: 2,
+                  mx: previewBoxMargins,
+                  mb: previewBoxMargins,
+                  mt: 1,
+                }}
               ></Box>
             </CardContent>
           </Card>
