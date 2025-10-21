@@ -1,6 +1,10 @@
 import { Card, Grid, Stack, Typography } from "@mui/material";
 
 export default function Feature2() {
+  const responsivePadding = { xs: "3rem 1rem 10rem 1rem", sm: "3rem 3rem 10rem 3rem",md: "3rem 5rem 10rem 5rem" };
+  // For grid
+  const responsiveCardSizes = { xs: 12, md: 6 };
+
   const cards = [
     {
       title: "One app, total control",
@@ -19,8 +23,8 @@ export default function Feature2() {
       desc: "Everything you need to stay on top and organized.",
     },
   ].map((item) => (
-    <Grid size={6}>
-      <Card sx={{ padding: ".5rem", height: "100%"}}>
+    <Grid size={responsiveCardSizes}>
+      <Card sx={{ padding: ".5rem", height: "100%" }}>
         <Typography variant="h6" align="center" sx={{ marginBottom: 1.5 }}>
           {item.title}
         </Typography>
@@ -36,7 +40,7 @@ export default function Feature2() {
       <Grid
         container
         sx={{
-          padding: "3rem 6rem 14rem 6rem",
+          padding: responsivePadding,
           backgroundColor: "whitesmoke",
         }}
         spacing={4}
