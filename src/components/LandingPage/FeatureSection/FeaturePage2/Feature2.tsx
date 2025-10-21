@@ -21,7 +21,7 @@ export default function Feature2() {
   ].map((item) => (
     <Grid size={6}>
       <Card sx={{ padding: ".5rem", height: "100%"}}>
-        <Typography variant="h6" align="center" sx={{ fontWeight: 600, marginBottom: 1.5 }}>
+        <Typography variant="h6" align="center" sx={{ marginBottom: 1.5 }}>
           {item.title}
         </Typography>
         <Typography variant="body1" align="center" color="text.secondary">
