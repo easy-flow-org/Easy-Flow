@@ -27,6 +27,8 @@ const theme = createTheme({
   },
 });
 
+// TODO: MOVE THIS TO COMPONENTS FOLDER
+
 export default function ThemeRegistry({ children }: PropsWithChildren) {
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 }
