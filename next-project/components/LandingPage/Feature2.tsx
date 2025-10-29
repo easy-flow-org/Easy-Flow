@@ -1,4 +1,4 @@
-"useclient"
+"use client"
 
 import { Card, Grid, Stack, Typography } from "@mui/material";
 

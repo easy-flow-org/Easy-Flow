@@ -1,4 +1,4 @@
-"useclient"
+"use client"
 
 import { ArrowRight, ArrowRightOutlined } from "@mui/icons-material";
 import { Stack, Typography, Card, CardContent, Box, CardActions, Button } from "@mui/material";
