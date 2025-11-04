@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from "@mui/material"
+import { autocompleteClasses, Box, Button, ButtonProps } from "@mui/material"
 import Link from "next/link";
 import { SpaceDashboardOutlined, SpaceDashboard } from "@mui/icons-material"
 import { Urbanist } from 'next/font/google';
@@ -19,26 +19,35 @@ export default function NavButton({children, icon, href, ...props}: ButtonProps 
             variant="text" 
             sx={{
                 color: 'white', 
+                boxSizing: "border-box",
+                width: 285,
                 pt:2,
                 pb:2, 
                 pl: 5, 
-                pr: 10, 
+                pr: 0, 
                 fontSize: 20,
                 fontFamily: "'Urbanist', 'Helvetica', 'Arial', sans-serif",
                 justifyContent: 'flex-start',
                 alignItems: 'center',
                 textTransform: 'none',
                 borderWidth: 8,
-                // borderRightStyle: atButtonDestination ? 'solid' : 'none', /* need to tweak visual before enabling */
             }
             }
             {...props}
         >
             <IconPicker icon={atButtonDestination ? name : name + 'Outlined'} sx={{fontSize: 60, pr: 3, }}/>
             {children}
+            <Box 
+                sx={{
+                    backgroundColor: atButtonDestination ? 'white' : 'transparent',
+                    width: 10,
+                    height: 80,
+                    borderTopLeftRadius: 10,
+                    borderBottomLeftRadius: 10,
+                    marginLeft: 'auto',
+                }}
+            />
         </Button>
         </Link>
     );
 }
-
-// simply create onclick to change name to include/exclude 'outlined'

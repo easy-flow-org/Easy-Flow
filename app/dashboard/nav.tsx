@@ -28,11 +28,14 @@ export default function Nav() {
             variant='permanent'
             // onClose={() => setOpen(false)}
             sx = {{ color: "black"}}
-            slotProps={{ paper: {
-                sx: {
-                backgroundColor: '#0e0e0eff', 
-                color: 'white',             
-                }}}}
+            slotProps={{ 
+                paper: {
+                    sx: {
+                        backgroundColor: '#0e0e0eff', 
+                        color: 'white',   
+                        borderRight: 0, 
+                    }
+                }}}
         >
             <Box sx={{ height: 200, pl: 4, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <LogoDevRoundedIcon sx={{fontSize: 100, pr: 4}}/>
