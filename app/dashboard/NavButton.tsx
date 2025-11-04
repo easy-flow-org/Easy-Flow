@@ -1,15 +1,20 @@
 import { Button, ButtonProps } from "@mui/material"
 import Link from "next/link";
-import { SpaceDashboardRounded, SpaceDashboardOutlined, SpaceDashboard } from "@mui/icons-material"
+import { SpaceDashboardOutlined, SpaceDashboard } from "@mui/icons-material"
 import { Urbanist } from 'next/font/google';
+import IconPicker from "./IconPicker";
+import { usePathname } from 'next/navigation';
 
 const urbanist = Urbanist({ subsets: ['latin'] });
 
-export default function NavButton({children, ...props}: ButtonProps) {
+export default function NavButton({children, icon, href, ...props}: ButtonProps & {icon: string, href: string}) {
 
+    let name: string = icon;
+    const pathname = usePathname();
+    const atButtonDestination: boolean = pathname === href;
 
     return (
-        <Link href='/dashboard'>
+        <Link href={href}>
         <Button 
             variant="text" 
             sx={{
@@ -23,13 +28,17 @@ export default function NavButton({children, ...props}: ButtonProps) {
                 justifyContent: 'flex-start',
                 alignItems: 'center',
                 textTransform: 'none',
+                borderWidth: 8,
+                // borderRightStyle: atButtonDestination ? 'solid' : 'none', /* need to tweak visual before enabling */
             }
             }
             {...props}
         >
-            <SpaceDashboardOutlined sx={{fontSize: 60, pr: 3}}/>
+            <IconPicker icon={atButtonDestination ? name : name + 'Outlined'} sx={{fontSize: 60, pr: 3, }}/>
             {children}
         </Button>
         </Link>
     );
 }
+
+// simply create onclick to change name to include/exclude 'outlined'

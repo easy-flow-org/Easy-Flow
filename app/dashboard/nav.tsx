@@ -14,9 +14,9 @@ export default function Nav() {
         return (
         <AppBar position="static">
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-around'}}>
-                <NavButton>Dashboard</NavButton>
-                <NavButton>Calendar</NavButton>
-                <NavButton>Focus Mode</NavButton>
+                <NavButton href='/dashboard' icon='SpaceDashboard'>Dashboard</NavButton>
+                <NavButton href='/dashboard/calendar' icon='SpaceDashboard'>Calendar</NavButton>
+                <NavButton href='/dashboard/focus-mode' icon='SpaceDashboard'>Focus Mode</NavButton>
             </Toolbar>
         </AppBar>
         );
@@ -25,7 +25,8 @@ export default function Nav() {
     return (
         <Drawer 
             open={true}
-            onClose={() => setOpen(false)}
+            variant='permanent'
+            // onClose={() => setOpen(false)}
             sx = {{ color: "black"}}
             slotProps={{ paper: {
                 sx: {
@@ -37,9 +38,9 @@ export default function Nav() {
                 <LogoDevRoundedIcon sx={{fontSize: 100, pr: 4}}/>
                 {/* <Typography variant='h4'>Easy Flow</Typography> */}
             </Box>
-            <NavButton>Dashboard</NavButton>
-            <NavButton>Calendar</NavButton>
-            <NavButton>Focus Mode</NavButton>
+            <NavButton href='/dashboard' icon='SpaceDashboard'>Dashboard</NavButton>
+            <NavButton href='/dashboard/calendar' icon='CalendarMonth'>Calendar</NavButton>
+            <NavButton href='/dashboard/focus-mode' icon='OfflineBolt'>Focus Mode</NavButton>
         </Drawer>
     )
 } 
