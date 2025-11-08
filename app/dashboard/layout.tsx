@@ -13,7 +13,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return (
     <>
         <Nav></Nav>
-        <Container sx={{ color: 'black', backgroundColor: '#9c1b1bff'}}>{children}</Container>
+        {children} 
     </>
     );
 }

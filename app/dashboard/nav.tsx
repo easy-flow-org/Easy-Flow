@@ -8,12 +8,12 @@ import NavButton from './NavButton';
 
 export default function Nav() {
     const [open, setOpen] = useState(false);
-    const isMobile = useMediaQuery('(max-width:600px)');
+    const isMobile = useMediaQuery('(max-width:1000px)');
 
     if (isMobile) { // empty just wanted to test media query
         return (
         <AppBar position="static">
-            <Toolbar sx={{ display: 'flex', justifyContent: 'space-around'}}>
+            <Toolbar sx={{ display: 'flex', justifyContent: 'space-around', backgroundColor: '#0e0e0eff'}}>
                 <NavButton href='/dashboard' icon='SpaceDashboard'>Dashboard</NavButton>
                 <NavButton href='/dashboard/calendar' icon='SpaceDashboard'>Calendar</NavButton>
                 <NavButton href='/dashboard/focus-mode' icon='SpaceDashboard'>Focus Mode</NavButton>
