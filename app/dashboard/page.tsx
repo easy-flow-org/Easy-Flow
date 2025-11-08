@@ -3,7 +3,6 @@
 import { Box, Container, Paper, Typography, useMediaQuery} from "@mui/material";
 import DashboardRow from "./DashboardRow";
 import CourseCard from "./CourseCard"
-import { userAgent } from "next/server";
 
 
 let user: string = 'user';
@@ -16,9 +15,6 @@ export default function Dashboard() {
   return (
     <Box sx={{
         height: '100vh',
-        borderStyle: 'dashed',
-        borderColor: 'green',
-        borderLeftStyle: 'dashed',
         flexGrow: 1,
         boxSizing: 'border-box',
         width: `calc(100% - ${drawerWidth}px)`,
@@ -31,11 +27,9 @@ export default function Dashboard() {
         <Typography variant="h2">Welcome back, {user}</Typography>
       </Box>
       <DashboardRow drawerWidth={drawerWidth}>
-        <Box sx={{ 
-                  border: '1px dashed white', 
-                  width: '20rem', 
+        <Box sx={{  
+                  alignSelf: 'stretch', 
                   flexGrow: 1, 
-                  '&:hover': { borderColor: 'black', },
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -44,14 +38,14 @@ export default function Dashboard() {
           <CourseCard/>
           <CourseCard/>
         </Box>
-        <Box sx={{ borderStyle: 'dashed', width: '20rem', flexGrow: 1 }}></Box>
+        <Box sx={{ alignSelf: 'stretch', flexGrow: 1 }}></Box>
       </DashboardRow>
       <DashboardRow drawerWidth={drawerWidth}>
-        <Box sx={{ borderStyle: 'dashed', width: '20rem', flexGrow: 1 }}></Box>
-        <Box sx={{ borderStyle: 'dashed', width: '20rem', flexGrow: 1 }}></Box>
+        <Box sx={{ alignSelf: 'stretch', flexGrow: 1 }}></Box>
+        <Box sx={{ alignSelf: 'stretch', flexGrow: 1 }}></Box>
       </DashboardRow>
     </Box>
   )
 }
 
-{/* can also just do, two rows, each wrappable*/}
+{/* get rid of the hover effects soon */}
