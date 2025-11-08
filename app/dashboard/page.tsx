@@ -3,6 +3,7 @@
 import { Box, Container, Paper, Typography, useMediaQuery} from "@mui/material";
 import DashboardRow from "./DashboardRow";
 import CourseCard from "./CourseCard"
+import BaseCard from "./BaseCard";
 
 
 let user: string = 'user';
@@ -19,17 +20,23 @@ export default function Dashboard() {
         boxSizing: 'border-box',
         width: `calc(100% - ${drawerWidth}px)`,
         ml: `calc(${drawerWidth}px + 0px)`,
-        
+        backgroundColor: true ? '#e2e2e2ff': '#ddddddff',
+        paddingBottom: '2rem',
+        paddingTop: '2rem',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '2rem',
       }}>
       <Box sx={{
-        height: '10vh',
+        height: 'auto',
+        paddingLeft: '32px',
       }}>
-        <Typography variant="h2">Welcome back, {user}</Typography>
+        <Typography variant="h3">Welcome back, {user}</Typography>
       </Box>
       <DashboardRow drawerWidth={drawerWidth}>
         <Box sx={{  
                   alignSelf: 'stretch', 
-                  flexGrow: 1, 
+                  flexGrow: 0, 
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -37,12 +44,19 @@ export default function Dashboard() {
                   }}>
           <CourseCard/>
           <CourseCard/>
+          <CourseCard/>
         </Box>
-        <Box sx={{ alignSelf: 'stretch', flexGrow: 1 }}></Box>
+        <Box sx={{ alignSelf: 'stretch', flexGrow: 1 }}>
+          <BaseCard><></></BaseCard>
+        </Box>
       </DashboardRow>
       <DashboardRow drawerWidth={drawerWidth}>
-        <Box sx={{ alignSelf: 'stretch', flexGrow: 1 }}></Box>
-        <Box sx={{ alignSelf: 'stretch', flexGrow: 1 }}></Box>
+        <Box sx={{ alignSelf: 'stretch', flexGrow: 1 }}>
+          <BaseCard><></></BaseCard>
+        </Box>
+        <Box sx={{ alignSelf: 'stretch', flexGrow: 1 }}>
+          <BaseCard><></></BaseCard>
+        </Box>
       </DashboardRow>
     </Box>
   )

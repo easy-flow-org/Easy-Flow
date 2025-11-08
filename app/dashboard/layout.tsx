@@ -11,9 +11,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
    
 
     return (
-    <>
+    <ThemeRegistry>
         <Nav></Nav>
         {children} 
-    </>
+    </ThemeRegistry>
     );
 }

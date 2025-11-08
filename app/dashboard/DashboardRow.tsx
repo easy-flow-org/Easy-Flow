@@ -17,7 +17,7 @@ export default function DashboardRow({ children, drawerWidth }: {children: React
 
         justifyContent: 'space-around',
         alignItems: 'center',
-        padding: '2rem',
+        padding: '0rem 2rem',
         gap: '2rem'
       }}>
       {children}
