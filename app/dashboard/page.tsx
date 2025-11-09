@@ -1,9 +1,11 @@
 'use client'
 
 import { Box, Container, Paper, Typography, useMediaQuery} from "@mui/material";
+import { BarChart } from "@mui/x-charts"
 import DashboardRow from "./DashboardRow";
 import CourseCard from "./CourseCard"
 import BaseCard from "./BaseCard";
+import FocusChart from "./FocusChart";
 
 
 let user: string = 'user';
@@ -25,13 +27,13 @@ export default function Dashboard() {
         paddingTop: '2rem',
         display: 'flex',
         flexDirection: 'column',
-        gap: '2rem',
+        gap: '1rem',
       }}>
       <Box sx={{
         height: 'auto',
-        paddingLeft: '32px',
+        paddingLeft: '35px',
       }}>
-        <Typography variant="h3">Welcome back, {user}</Typography>
+        <Typography variant="h3" sx={{fontWeight: 700}}>Welcome back, {user}</Typography>
       </Box>
       <DashboardRow drawerWidth={drawerWidth}>
         <Box sx={{  
@@ -40,6 +42,7 @@ export default function Dashboard() {
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
+                  justifyContent: 'space-around',
                   gap: 2,
                   }}>
           <CourseCard/>
@@ -47,7 +50,9 @@ export default function Dashboard() {
           <CourseCard/>
         </Box>
         <Box sx={{ alignSelf: 'stretch', flexGrow: 1 }}>
-          <BaseCard><></></BaseCard>
+          <BaseCard>
+            <FocusChart/>
+          </BaseCard>
         </Box>
       </DashboardRow>
       <DashboardRow drawerWidth={drawerWidth}>
