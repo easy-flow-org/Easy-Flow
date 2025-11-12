@@ -1,0 +1,1 @@
+// Extracts raw text from PDF or DOCX
