@@ -1,12 +1,11 @@
 'use client'
 
-import { Box, Container, Paper, Typography, useMediaQuery} from "@mui/material";
+import { Box, Container, Paper, Typography, useMediaQuery } from "@mui/material";
 import { BarChart } from "@mui/x-charts"
 import DashboardRow from "./DashboardRow";
 import CourseCard from "./CourseCard"
 import BaseCard from "./BaseCard";
 import FocusChart from "./FocusChart";
-
 
 let user: string = 'user';
 
@@ -14,44 +13,43 @@ export default function Dashboard() {
   const isSmall = useMediaQuery('(max-width:1000px)');
   const drawerWidth: number = isSmall ? 0 : 285;
 
-
   return (
     <Box sx={{
-        height: '100vh',
-        flexGrow: 1,
-        boxSizing: 'border-box',
-        width: `calc(100% - ${drawerWidth}px)`,
-        ml: `calc(${drawerWidth}px + 0px)`,
-        backgroundColor: true ? '#e2e2e2ff': '#ddddddff',
-        paddingBottom: '2rem',
-        paddingTop: '2rem',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1rem',
-      }}>
+      height: '100vh',
+      flexGrow: 1,
+      boxSizing: 'border-box',
+      width: `calc(100% - ${drawerWidth}px)`,
+      ml: `calc(${drawerWidth}px + 0px)`,
+      backgroundColor: true ? '#e2e2e2ff' : '#ddddddff',
+      paddingBottom: '2rem',
+      paddingTop: '2rem',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '1rem',
+    }}>
       <Box sx={{
         height: 'auto',
         paddingLeft: '35px',
       }}>
-        <Typography variant="h3" sx={{fontWeight: 700}}>Welcome back, {user}</Typography>
+        <Typography variant="h3" sx={{ fontWeight: 700 }}>Welcome back, {user}</Typography>
       </Box>
       <DashboardRow drawerWidth={drawerWidth}>
-        <Box sx={{  
-                  alignSelf: 'stretch', 
-                  flexGrow: 0, 
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'space-around',
-                  gap: 2,
-                  }}>
-          <CourseCard/>
-          <CourseCard/>
-          <CourseCard/>
+        <Box sx={{
+          alignSelf: 'stretch',
+          flexGrow: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          gap: 2,
+        }}>
+          <CourseCard />
+          <CourseCard />
+          <CourseCard />
         </Box>
         <Box sx={{ alignSelf: 'stretch', flexGrow: 1 }}>
           <BaseCard>
-            <FocusChart/>
+            <FocusChart />
           </BaseCard>
         </Box>
       </DashboardRow>
@@ -67,4 +65,4 @@ export default function Dashboard() {
   )
 }
 
-{/* get rid of the hover effects soon */}
+{/* get rid of the hover effects soon */ }
