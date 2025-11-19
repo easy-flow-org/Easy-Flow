@@ -10,9 +10,23 @@ import FocusChart from "./FocusChart";
 
 let user: string = 'user';
 
+interface Course {
+  title: string;
+  id: string;
+  startTime: number;
+  weekdays: string[];
+}
+
+const Course1: Course = {
+  title: "Web Design",
+  id: "Cisc 3150",
+  startTime: 11 * 60, // 11 AM
+  weekdays: ['Tu', "Th"],
+}
+
 export default function Dashboard() {
   const isSmall = useMediaQuery('(max-width:1000px)');
-  const drawerWidth: number = isSmall ? 0 : 285;
+  const drawerWidth: number = isSmall ? 0 : 228;
 
 
   return (

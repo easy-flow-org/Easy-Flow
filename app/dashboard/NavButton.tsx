@@ -19,16 +19,16 @@ export default function NavButton({children, icon, href, ...props}: ButtonProps 
             sx={{
                 color: 'white', 
                 boxSizing: "border-box",
-                width: isMobile ? 50 : 285,
+                width: isMobile ? 40 : 228,
                 pt:2,
                 pb: isMobile ? 0 : 2, 
-                pl: isMobile ? 0 : 5, 
+                pl: isMobile ? 0 : 4, 
                 pr: 0, 
-                fontSize: 20,
+                fontSize: 16,
                 fontFamily: "'Urbanist', 'Helvetica', 'Arial', 'sans-serif'",
                 alignItems: 'center',
                 textTransform: 'none',
-                borderWidth: 8,
+                borderWidth: 7,
 
                 display: 'flex',
                 flexDirection: isMobile ? 'column' : 'row',
@@ -36,15 +36,15 @@ export default function NavButton({children, icon, href, ...props}: ButtonProps 
             }
             {...props}
         >
-            <IconPicker icon={atButtonDestination ? icon : icon + 'Outlined'} sx={{fontSize: isMobile ? 40 : 60, pr: isMobile ? 0 : 3, }}/>
+            <IconPicker icon={atButtonDestination ? icon : icon + 'Outlined'} sx={{fontSize: isMobile ? 32 : 48, pr: isMobile ? 0 : 3, }}/>
             {children}
             <Box 
                 sx={{
                     backgroundColor: atButtonDestination ? 'white' : 'transparent',
-                    width: isMobile ? 64 : 10,
-                    height: isMobile ? 2 : 80,
+                    width: isMobile ? 64 : 8,
+                    height: isMobile ? 2 : 64,
                     mt: isMobile? 1 : 0,
-                    borderTopLeftRadius: 10,
+                    borderTopLeftRadius: 8,
                     borderTopRightRadius: isMobile ? 10 : 0,
                     borderBottomLeftRadius: isMobile ? 0 : 10,
                     marginLeft: 'auto',

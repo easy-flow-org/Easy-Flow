@@ -34,11 +34,12 @@ export default function Nav() {
                         backgroundColor: '#0e0e0eff', 
                         color: 'white',   
                         borderRight: 0, 
+                        width: '228px'
                     }
                 }}}
         >
             <Box sx={{ height: 200, pl: 4, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                <LogoDevRoundedIcon sx={{fontSize: 100, pr: 4}}/>
+                <LogoDevRoundedIcon sx={{fontSize: 80, pr: 4}}/>
                 {/* <Typography variant='h4'>Easy Flow</Typography> */}
             </Box>
             <NavButton href='/dashboard' icon='SpaceDashboard'>Dashboard</NavButton>
