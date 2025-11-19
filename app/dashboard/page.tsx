@@ -47,7 +47,7 @@ export default function Dashboard() {
         height: 'auto',
         paddingLeft: '35px',
       }}>
-        <Typography variant="h3" sx={{fontWeight: 700}}>Welcome back, {user}</Typography>
+        <Typography variant="h4" sx={{fontWeight: 700}}>Welcome back, {user}</Typography>
       </Box>
       <DashboardRow drawerWidth={drawerWidth}>
         <Box sx={{  

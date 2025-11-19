@@ -10,7 +10,7 @@ export default function FocusChart() {
         flexDirection: 'column',
         alignItems: 'center',
         width: '100%',
-        padding: '1rem',
+        padding: '.8rem',
     }}>
         <Box sx={{
             display: 'flex',
@@ -24,13 +24,14 @@ export default function FocusChart() {
                 alignItems: 'flex-start',
                 width: 'auto',
             }}>
-                <Typography>Daily Focus Mode Progress</Typography>
-                <Typography>Pomodoros logged per day</Typography>
+                <Typography sx={{fontSize: 14}}>Daily Focus Mode Progress</Typography>
+                <Typography sx={{fontSize: 14}}>Pomodoros logged per day</Typography>
             </Box>
             <Select 
                 id="Range"
                 value={"daily"}
                 sx={{
+                    fontSize: 14,
                     position: 'relative',
                     marginLeft: 'auto',
                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#000000',},
@@ -57,8 +58,8 @@ export default function FocusChart() {
                 data: [8 + Math.random()*15, 8 + Math.random()*15, 8 + Math.random()*15, 8 + Math.random()*15, 8 + Math.random()*15, 8 + Math.random()*15, 8 + Math.random()*15],
                 color: 'url(#gradient)',
             }]}
-            height={300}
-            borderRadius={10}
+            height={240}
+            borderRadius={8}
             sx={{ width: "100%"}}
         >
             <Gradient/>
