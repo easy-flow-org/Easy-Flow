@@ -1,19 +1,19 @@
 'use client'
 
-import Drawer from '@mui/material/Drawer';
-import ClippedDrawer from '@mui/material/Drawer';   
-import { Container, Typography, Button} from '@mui/material';
-import { useState } from 'react';
-import Nav from './nav';
+import SideNav from './components/SideNav';
 import ThemeRegistry from '../theme-provider';
- 
-export default function Layout({ children }: { children: React.ReactNode }) {
-   
+import { Box } from '@mui/material';
 
-    return (
+export default function Layout({ children }: { children: React.ReactNode }) {
+  // This is to account for the Side Nav's width
+  const sideNavWidth = "230px"
+
+  return (
     <ThemeRegistry>
-        <Nav></Nav>
-        {children} 
+      <SideNav></SideNav>
+      <Box sx={{marginLeft: sideNavWidth,}}>
+        {children}
+      </Box>
     </ThemeRegistry>
-    );
+  );
 }
