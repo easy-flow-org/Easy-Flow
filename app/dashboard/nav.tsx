@@ -43,6 +43,7 @@ export default function Nav() {
                 {/* <Typography variant='h4'>Easy Flow</Typography> */}
             </Box>
             <NavButton href='/dashboard' icon='SpaceDashboard'>Dashboard</NavButton>
+            <NavButton href='/dashboard/courses' icon='AutoStories'>Courses</NavButton>
             <NavButton href='/dashboard/calendar' icon='CalendarMonth'>Calendar</NavButton>
             <NavButton href='/dashboard/focus-mode' icon='OfflineBolt'>Focus Mode</NavButton>
         </Drawer>
