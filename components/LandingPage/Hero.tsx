@@ -2,7 +2,7 @@
 
 import { Button, Container, Grid, Stack, styled, Typography } from "@mui/material";
 import HeroNav from "./HeroNav";
-
+import Link from "next/link";
 // Defining Custom Styled Components Here
 const StyledGrid = styled(Grid)(({ theme }) => ({
   marginTop: "1rem",
@@ -33,8 +33,15 @@ export default function Hero() {
 
           <Stack direction={"row"} gap={"1rem"} sx={{ justifyContent: "center", alignItems: "center", marginTop: "1.5rem", }}>
             <Button variant="contained" color="secondary" sx={{ textTransform: "none" }}>Try EasyFlow for Free</Button>
-            <Button variant="outlined" color="inherit" sx={{ textTransform: "none" }}>Login</Button>
-          </Stack>
+<Link href="/login" passHref>
+  <Button 
+    variant="outlined" 
+    color="inherit" 
+    sx={{ textTransform: "none" }}
+  >
+    Login
+  </Button>
+</Link>          </Stack>
         </Stack>
       </StyledGrid>
     </>
