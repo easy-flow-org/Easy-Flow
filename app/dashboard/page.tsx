@@ -1,20 +1,25 @@
 'use client'
 
 import { Box, Card, Grid } from "@mui/material"
+import CourseCard from "./components/CourseCard"
+import dummyContent from "@/lib/dummyContent"
 
 export default function Dashboard() {
-  const gridItemPadding = 2
+  const gridItemPadding = 1
+
   return (
     <>
-      <Grid container spacing={2} sx={{ height: "100vh", minWidth: "800px", }}>
+      <Grid container spacing={2} p={1} sx={{ minWidth: "800px", }}>
         {/* gridItemPadding Columns */}
-        <Grid size={5} p={gridItemPadding}>
+
+        <Grid size={12} p={gridItemPadding}>
+          {dummyContent.courses.map((c) => (
+            <CourseCard course={c} key={c.id}></CourseCard>
+          ))}
         </Grid>
-        <Grid size={7} p={gridItemPadding}>
+        <Grid size={12} p={gridItemPadding}>
         </Grid>
-        <Grid size={6} p={gridItemPadding}>
-        </Grid>
-        <Grid size={6} p={gridItemPadding}>
+        <Grid size={12} p={gridItemPadding}>
         </Grid>
       </Grid>
     </>
