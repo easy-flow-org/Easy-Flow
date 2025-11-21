@@ -13,7 +13,7 @@ export default function CourseCard({ course }: CourseCardProps) {
         <Typography variant="h6" fontWeight={"bold"}>
           {course.title}
         </Typography>
-        <Divider sx={{ mb: 1 }}></Divider>
+        <Divider sx={{ mb: .5 }}></Divider>
         <Stack direction={"row"}>
           <Typography variant="subtitle1">
             {course.date}
