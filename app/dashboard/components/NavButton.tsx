@@ -1,55 +1,40 @@
-import { Box, Button, ButtonProps, useMediaQuery } from "@mui/material"
+import { Box, Button } from "@mui/material";
 import Link from "next/link";
-import { Urbanist } from 'next/font/google';
 import { usePathname } from 'next/navigation';
 import IconPicker from "./IconPicker";
 
-const urbanist = Urbanist({ subsets: ['latin'] });
+type NavButtonProps = {
+  href: string;
+  icon: string;
+  label?: string;
+  compact?: boolean; // for mobile: show icon only
+};
 
-export default function NavButton({ children, icon, href, ...props }: ButtonProps & { icon: string, href: string }) {
-
+export default function NavButton({ href, icon, label, compact = false }: NavButtonProps) {
   const pathname = usePathname();
-  const atButtonDestination: boolean = pathname === href;
-  const isMobile = useMediaQuery('(max-width:1000px)');
+  const isActive = pathname === href;
 
   return (
     <Link href={href} style={{ textDecoration: 'none' }}>
       <Button
         variant="text"
+        aria-current={isActive ? 'page' : undefined}
         sx={{
           color: 'white',
-          boxSizing: "border-box",
-          width: isMobile ? 40 : 228,
-          pt: 2,
-          pb: isMobile ? 0 : 2,
-          pl: isMobile ? 0 : 4,
-          pr: 0,
-          fontSize: 16,
-          fontFamily: "'Urbanist', 'Helvetica', 'Arial', 'sans-serif'",
+          display: 'flex',
           alignItems: 'center',
           textTransform: 'none',
-          borderWidth: 7,
-
-          display: 'flex',
-          flexDirection: isMobile ? 'column' : 'row',
-        }
-        }
-        {...props}
+          justifyContent: compact ? 'center' : 'flex-start',
+          width: compact ? 56 : 224,
+          px: compact ? 0 : 2,
+          py: compact ? 1 : 2,
+        }}
       >
-        <IconPicker icon={atButtonDestination ? icon : icon + 'Outlined'} sx={{ fontSize: isMobile ? 32 : 48, pr: isMobile ? 0 : 3, }} />
-        {children}
-        <Box
-          sx={{
-            backgroundColor: atButtonDestination ? 'white' : 'transparent',
-            width: isMobile ? 64 : 8,
-            height: isMobile ? 2 : 64,
-            mt: isMobile ? 1 : 0,
-            borderTopLeftRadius: 8,
-            borderTopRightRadius: isMobile ? 10 : 0,
-            borderBottomLeftRadius: isMobile ? 0 : 10,
-            marginLeft: 'auto',
-          }}
-        />
+        <IconPicker icon={isActive ? icon : icon + 'Outlined'} sx={{ fontSize: compact ? 28 : 40, mr: compact ? 0 : 2 }} />
+        {!compact && <Box component="span" sx={{ fontSize: 16 }}>{label}</Box>}
+        {!compact && (
+          <Box sx={{ ml: 'auto', width: 8, height: 56, backgroundColor: isActive ? 'white' : 'transparent', borderRadius: 1 }} />
+        )}
       </Button>
     </Link>
   );

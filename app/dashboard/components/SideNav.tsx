@@ -1,27 +1,33 @@
 'use client'
 
-import { useState } from 'react';
 import Drawer from '@mui/material/Drawer';
-import { Container, Typography, Button, AppBar, Toolbar, useMediaQuery, Box } from '@mui/material';
+import { AppBar, Toolbar, Box, useMediaQuery } from '@mui/material';
 import LogoDevRoundedIcon from '@mui/icons-material/LogoDevRounded';
 import NavButton from './NavButton';
 
+const DRAWER_WIDTH = 230;
+
+const navItems = [
+  { label: 'Dashboard', href: '/dashboard', icon: 'SpaceDashboard' },
+  { label: 'Calendar', href: '/dashboard/calendar', icon: 'CalendarMonth' },
+  { label: 'Focus Mode', href: '/dashboard/focus-mode', icon: 'OfflineBolt' },
+];
+
 export default function SideNav() {
-  // const isMobile = useMediaQuery('(max-width:1000px)');
+  // Treat <= 1000px as mobile
+  const isMobile = useMediaQuery('(max-width:1000px)');
 
-  // if (isMobile) {
-  //   return (
-  //     <AppBar position="static">
-  //       <Toolbar sx={{ display: 'flex', justifyContent: 'space-around', backgroundColor: '#0e0e0eff' }}>
-  //         <NavButton href='/dashboard' icon='SpaceDashboard'></NavButton>
-  //         <NavButton href='/dashboard/calendar' icon='CalendarMonth'></NavButton>
-  //         <NavButton href='/dashboard/focus-mode' icon='OfflineBolt'></NavButton>
-  //       </Toolbar>
-  //     </AppBar>
-  //   );
-  // }
-
-  const width = "230px"
+  if (isMobile) {
+    return (
+      <AppBar position="static" sx={{ backgroundColor: '#1e1e1e' }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-around', px: 1 }}>
+          {navItems.map((n) => (
+            <NavButton key={n.href} href={n.href} icon={n.icon} compact />
+          ))}
+        </Toolbar>
+      </AppBar>
+    );
+  }
 
   return (
     <Drawer
@@ -31,15 +37,21 @@ export default function SideNav() {
           sx: {
             backgroundColor: "#1e1e1e",
             color: "white",
-            width: width,
+            width: DRAWER_WIDTH,
+            boxSizing: 'border-box',
+            pt: 2,
           }
         }
       }}
     >
-      <LogoDevRoundedIcon sx={{ fontSize: 50, ml: "auto", mr: "auto", mt: 2, mb: 2}} />
-      <NavButton href='/dashboard' icon='SpaceDashboard'>Dashboard</NavButton>
-      <NavButton href='/dashboard/calendar' icon='CalendarMonth'>Calendar</NavButton>
-      <NavButton href='/dashboard/focus-mode' icon='OfflineBolt'>Focus Mode</NavButton>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+        <LogoDevRoundedIcon sx={{ fontSize: 50 }} />
+      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, px: 1 }}>
+        {navItems.map((n) => (
+          <NavButton key={n.href} href={n.href} icon={n.icon} label={n.label} />
+        ))}
+      </Box>
     </ Drawer>
-  )
-} 
+  );
+}
