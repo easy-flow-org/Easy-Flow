@@ -27,6 +27,13 @@ const dummyContent = {
       date: "02-13-2025",
       time: "10:00 AM",
       description: "Survey of early world history and major civilizations"
+    },
+    {
+      id: 5,
+      title: "JPN 1001",
+      date: "02-16-2025",
+      time: "10:00 AM",
+      description: "JPN 1001"
     }
   ]
 }

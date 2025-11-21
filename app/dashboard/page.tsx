@@ -23,9 +23,9 @@ export default function Dashboard() {
           }}
         >
           {/* Left: Courses list */}
-          <Paper variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, borderColor: (t) => t.palette.divider }}>
+          <Paper variant="outlined" sx={{ p: 2, height: "456px", backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, borderColor: (t) => t.palette.divider }}>
             <Typography variant="h6" mb={1} fontWeight={700} sx={{ color: theme.palette.text.primary }}>Courses</Typography>
-            <Stack gap={1}>
+            <Stack gap={1} height={"380px"} overflow={"auto"}>
               {dummyContent.courses.map((c) => (
                 <CourseCard course={c} key={c.id} />
               ))}
@@ -49,7 +49,7 @@ export default function Dashboard() {
           </Card>
           {/* Right: Upcoming & quick actions */}
           <Stack spacing={2}>
-            <Paper variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper }}>
+            <Paper variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, }}>
               <Typography variant="h6" fontWeight={700} mb={1} sx={{ color: theme.palette.text.primary }}>Upcoming</Typography>
               <List>
                 {dummyContent.courses.slice(0, 3).map((c) => (
@@ -62,7 +62,7 @@ export default function Dashboard() {
                 ))}
               </List>
             </Paper>
-            <Paper variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper }}>
+            <Paper variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1 }}>
               <Typography variant="h6" fontWeight={700} mb={1} sx={{ color: theme.palette.text.primary }}>Quick Actions</Typography>
               <Stack direction="column" spacing={1}>
                 <Button
