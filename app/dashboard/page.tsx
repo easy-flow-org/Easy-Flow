@@ -5,10 +5,12 @@ import CourseCard from "./components/CourseCard";
 import FocusChart from "./components/FocusChart";
 import dummyContent from "@/lib/dummyContent";
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 import { useTheme } from '@mui/material/styles';
 
 export default function Dashboard() {
   const theme = useTheme();
+  const router = useRouter();
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', minHeight: '100vh', p: 2, backgroundColor: (t) => t.palette.background.default }}>
       <Box sx={{ p: 2, minWidth: 800, width: '100%', maxWidth: 1200 }}>
@@ -63,12 +65,24 @@ export default function Dashboard() {
             <Paper variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper }}>
               <Typography variant="h6" fontWeight={700} mb={1} sx={{ color: theme.palette.text.primary }}>Quick Actions</Typography>
               <Stack direction="column" spacing={1}>
-                <Link href="/dashboard/calendar" style={{ textDecoration: 'none' }}>
-                  <Button variant="outlined" fullWidth sx={{ textTransform: 'none' }}>Open Calendar</Button>
-                </Link>
-                <Link href="/dashboard/focus-mode" style={{ textDecoration: 'none' }}>
-                  <Button variant="outlined" fullWidth sx={{ textTransform: 'none' }}>Enter Focus Mode</Button>
-                </Link>
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  fullWidth
+                  sx={{ textTransform: 'none' }}
+                  onClick={() => alert('New Task — not implemented')}
+                >
+                  New Task
+                </Button>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  color="secondary"
+                  sx={{ textTransform: 'none' }}
+                  onClick={() => alert('Create course — not implemented')}
+                >
+                  New Course
+                </Button>
               </Stack>
             </Paper>
           </Stack>
