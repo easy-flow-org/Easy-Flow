@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default function Dashboard() {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', minHeight: '100vh', p: 2 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', minHeight: '100vh', p: 2 }}>
       <Box sx={{ p: 2, minWidth: 800, width: '100%', maxWidth: 1200 }}>
         <Box
           sx={{

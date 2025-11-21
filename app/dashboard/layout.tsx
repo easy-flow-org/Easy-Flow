@@ -2,16 +2,16 @@
 
 import SideNav from './components/SideNav';
 import ThemeRegistry from '../theme-provider';
-import { Box } from '@mui/material';
+import { Box, useMediaQuery } from '@mui/material';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  // This is to account for the Side Nav's width
-  const sideNavWidth = "230px"
+  const sideNavWidth = "230px";
+  const isMobile = useMediaQuery('(max-width:1000px)');
 
   return (
     <ThemeRegistry>
-      <SideNav></SideNav>
-      <Box sx={{marginLeft: sideNavWidth,}}>
+      <SideNav />
+      <Box sx={{ marginLeft: isMobile ? 0 : sideNavWidth }}>
         {children}
       </Box>
     </ThemeRegistry>
