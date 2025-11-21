@@ -6,7 +6,7 @@ import { BarChart } from "@mui/x-charts";
 
 type RangeOption = 'daily' | 'weekly' | 'monthly';
 
-function generateRandomHours(count: number, min = 0.5, max = 8) {
+function generateRandomHours(count: number, min = 0.5, max = 4) {
   return Array.from({ length: count }, () => Number((min + Math.random() * (max - min)).toFixed(1)));
 }
 
@@ -32,8 +32,8 @@ export default function FocusChart() {
   // keep demo data but generate programmatically instead of repeating expressions
   const seriesData = useMemo(() => {
     // choose different typical ranges depending on selection
-    if (range === 'daily') return generateRandomHours(labels.length, 0, 8);
-    if (range === 'weekly') return generateRandomHours(labels.length, 2, 30); // hours per week
+    if (range === 'daily') return generateRandomHours(labels.length, 0, 4);
+    if (range === 'weekly') return generateRandomHours(labels.length, 2, 20); // hours per week
     return generateRandomHours(labels.length, 10, 120); // hours per month
   }, [range, labels.length]);
 
