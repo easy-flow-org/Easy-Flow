@@ -5,12 +5,24 @@ import CourseCard from "./components/CourseCard";
 import FocusChart from "./components/FocusChart";
 import dummyContent from "@/lib/dummyContent";
 import Link from "next/link";
-import { useRouter } from 'next/navigation';
 import { useTheme } from '@mui/material/styles';
+import AddCourseModal from "./components/AddCourseModal";
+import { useState } from "react";
 
 export default function Dashboard() {
   const theme = useTheme();
-  const router = useRouter();
+
+  // Related to add courses modal
+  const [showAddCourseModal, setAddCourseModal] = useState(false)
+  const handleAddCourseOpen = () => {
+    setAddCourseModal(true);
+  };
+
+  const handleAddCourseClose = () => {
+    setAddCourseModal(false);
+  };
+  //
+
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', minHeight: '100vh', p: 2, backgroundColor: (t) => t.palette.background.default }}>
       <Box sx={{ p: 2, minWidth: 800, width: '100%', maxWidth: 1200 }}>
@@ -22,6 +34,7 @@ export default function Dashboard() {
             alignItems: 'start',
           }}
         >
+
           {/* Left: Courses list */}
           <Paper variant="outlined" sx={{ p: 2, height: "456px", backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, borderColor: (t) => t.palette.divider }}>
             <Typography variant="h6" mb={1} fontWeight={700} sx={{ color: theme.palette.text.primary }}>Courses</Typography>
@@ -31,6 +44,7 @@ export default function Dashboard() {
               ))}
             </Stack>
           </Paper>
+
           {/* Middle: Main panel (FocusChart + actions) */}
           <Card variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
@@ -47,6 +61,7 @@ export default function Dashboard() {
             <Divider sx={{ mb: 2 }} />
             <FocusChart />
           </Card>
+
           {/* Right: Upcoming & quick actions */}
           <Stack spacing={2}>
             <Paper variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, }}>
@@ -62,12 +77,12 @@ export default function Dashboard() {
                 ))}
               </List>
             </Paper>
-            <Paper variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1 }}>
+            <Paper variant="outlined" sx={{ p: 1.5, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1 }}>
               <Typography variant="h6" fontWeight={700} mb={1} sx={{ color: theme.palette.text.primary }}>Quick Actions</Typography>
               <Stack direction="column" spacing={1}>
                 <Button
-                  variant="outlined"
-                  color="inherit"
+                  variant="contained"
+                  color="secondary"
                   fullWidth
                   sx={{ textTransform: 'none' }}
                   onClick={() => alert('New Task — not implemented')}
@@ -79,15 +94,25 @@ export default function Dashboard() {
                   fullWidth
                   color="secondary"
                   sx={{ textTransform: 'none' }}
-                  onClick={() => alert('Create course — not implemented')}
+                  onClick={handleAddCourseOpen}
                 >
                   New Course
+                </Button>
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  color="inherit"
+                  sx={{ textTransform: 'none' }}
+                  onClick={() => alert('Edit — not implemented')}
+                >
+                  Edit
                 </Button>
               </Stack>
             </Paper>
           </Stack>
         </Box>
       </Box>
+      <AddCourseModal open={showAddCourseModal} close={handleAddCourseClose}></AddCourseModal>
     </Box>
   );
 }
