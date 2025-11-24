@@ -1,7 +1,8 @@
 "use client"
 
 import React, { useEffect, useRef } from "react"
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, TextFieldProps } from "@mui/material";
+import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, TextField, TextFieldProps } from "@mui/material";
+import CourseDaySelector from "./CourseDaySelector";
 
 type ModalProps = {
   open: boolean
@@ -14,10 +15,8 @@ export default function AddCourseModal(props: ModalProps) {
     event.preventDefault()
     const form = event.currentTarget
     const data = new FormData(form)
-    console.log({
-      courseName: data.get("courseName"),
-      testName: data.get("testName"),
-    })
+    const json = Object.fromEntries((data as any).entries());
+    console.log(json)
     props.close?.()
   }
 
@@ -45,8 +44,8 @@ export default function AddCourseModal(props: ModalProps) {
     <>
       <Dialog open={props.open} onClose={props.close}>
         <DialogTitle>Add New Course</DialogTitle>
-        <DialogContent>
-          <form onSubmit={handleSubmit} action="#" id="add-course-form" >
+        <DialogContent  sx={{width:"100%", maxWidth:"400px"}}>
+          <form onSubmit={handleSubmit} action="#" id="add-course-form">
             <TextField
               inputRef={firstRef}
               autoFocus
@@ -55,18 +54,10 @@ export default function AddCourseModal(props: ModalProps) {
               label="Course Name"
               type="text"
               required
-              fullWidth
               {...sharedProps}
+              sx={{width: "100%", maxWidth:"320px"}}
             />
-            <TextField
-              id="test-name"
-              name="testName"
-              label="Test Name"
-              type="text"
-              required
-              fullWidth
-              {...sharedProps}
-            />
+            <CourseDaySelector></CourseDaySelector>
           </form>
         </DialogContent>
         <DialogActions>
