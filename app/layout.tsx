@@ -1,15 +1,21 @@
+import type { Metadata } from "next";
+import { AuthProvider } from "./context/authContext";
 import "./globals.css";
-import ThemeRegistry from "./theme-provider";
+
+export const metadata: Metadata = {
+  title: "Easy Flow",
+  description: "College platform",
+};
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body>
-        <ThemeRegistry>{children}</ThemeRegistry>
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
