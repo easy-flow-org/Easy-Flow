@@ -1,8 +1,10 @@
 "use client"
 
 import React, { useEffect, useRef } from "react"
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, TextField, TextFieldProps } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, TextFieldProps } from "@mui/material";
 import CourseDaySelector from "./CourseDaySelector";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 type ModalProps = {
   open: boolean
@@ -10,7 +12,8 @@ type ModalProps = {
 }
 
 export default function AddCourseModal(props: ModalProps) {
-  
+
+  // This is for when the user submits the form
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const form = event.currentTarget
@@ -19,6 +22,7 @@ export default function AddCourseModal(props: ModalProps) {
     console.log(json)
     props.close?.()
   }
+  //
 
   // This is for hover effect when opening modal
   const firstRef = useRef<HTMLInputElement | null>(null)
@@ -32,7 +36,7 @@ export default function AddCourseModal(props: ModalProps) {
   //
 
   // This is for convienience
-  const sharedProps:  Partial<TextFieldProps> = {
+  const sharedProps: Partial<TextFieldProps> = {
     margin: "normal",
     variant: "outlined",
     color: "secondary",
@@ -41,10 +45,11 @@ export default function AddCourseModal(props: ModalProps) {
   //
 
   return (
-    <>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Dialog open={props.open} onClose={props.close}>
         <DialogTitle>Add New Course</DialogTitle>
-        <DialogContent  sx={{width:"100%", maxWidth:"400px"}}>
+        <DialogContent sx={{ width: "100%", maxWidth: "400px" }}>
+          {/* This is the actual modal form */}
           <form onSubmit={handleSubmit} action="#" id="add-course-form">
             <TextField
               inputRef={firstRef}
@@ -55,9 +60,35 @@ export default function AddCourseModal(props: ModalProps) {
               type="text"
               required
               {...sharedProps}
-              sx={{width: "100%", maxWidth:"320px"}}
+              sx={{ width: "100%", maxWidth: "320px" }}
             />
             <CourseDaySelector></CourseDaySelector>
+            <TextField
+              id="course-start-time"
+              name="startTime"
+              label="Start Time"
+              type="time"
+              required
+              {...sharedProps}
+            />
+            <TextField
+              id="course-end-time"
+              name="endTime"
+              label="End Time"
+              type="time"
+              required
+              {...sharedProps}
+              sx={{ ml: 2 }}
+            />
+            <TextField
+              id="course-description"
+              name="courseDescription"
+              label="Course Description"
+              type="text"
+              {...sharedProps}
+              multiline
+              rows={4}
+              sx={{ width: "100%", maxWidth: "320px" }} />
           </form>
         </DialogContent>
         <DialogActions>
@@ -65,6 +96,6 @@ export default function AddCourseModal(props: ModalProps) {
           <Button onClick={props.close} variant="outlined" color="inherit" sx={{ textTransform: "none" }}>Cancel</Button>
         </DialogActions>
       </Dialog>
-    </>
+    </LocalizationProvider>
   )
 }
