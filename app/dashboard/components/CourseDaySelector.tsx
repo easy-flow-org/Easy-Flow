@@ -13,7 +13,7 @@ const ITEM_PADDING_TOP = 4;
 const MenuProps = {
   PaperProps: {
     style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      maxHeight: ITEM_HEIGHT * 8 + ITEM_PADDING_TOP,
       width: 250,
     },
   },
@@ -33,17 +33,15 @@ export default function CourseDaySelector() {
   const [totalDays, setTotalDays] = React.useState<string[]>([]);
 
   const handleChange = (event: SelectChangeEvent<typeof totalDays>) => {
-    const {
-      target: { value },
-    } = event;
+    // Deconstructing
+    const { target: { value } } = event;
     setTotalDays(
-      // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
   };
 
   return (
-    <FormControl color="secondary" sx={{width: "100%", maxWidth:"320px"}}>
+    <FormControl color="secondary" sx={{ width: "100%", maxWidth: "320px" }}>
       {/* Hidden input so FormData will include the selected days */}
       <input type="hidden" name="courseDays" value={totalDays.join(',')} />
       <InputLabel id="course-days-input">Course Days</InputLabel>
