@@ -1,6 +1,18 @@
 import { Typography, Box } from "@mui/material"
+import { Course } from "../../types/types"
+import { Tune } from "@mui/icons-material"
 
-export default function CourseCard() {
+const weekdaysSpelled: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; 
+
+const courseEx: Course = {
+  title: "Web Design",
+  id: "Cisc 3150",
+  startTime: "11:00 AM",
+  endTime: "12:15 PM",
+  weekdays: [false, false, true, false, true, false, false],
+}
+
+export default function CourseCard({ course=courseEx, widthProp='100%', heightProp='6rem'}: {course?: Course, widthProp?: string, heightProp?: string}) {
     return <Box sx={{
                 boxShadow: '0px 5px 7px 1px rgba(0, 0, 0, 0.1)',
                 boxSizing: 'border-box',
@@ -10,8 +22,8 @@ export default function CourseCard() {
                 borderWidth: '1px',
                 //borderLeft: '4px solid #3987e0ff',
                 
-                width: '100%',
-                height: '6rem',
+                width: widthProp,
+                height: heightProp,
                 minWidth: '24.7rem', 
                 
                 padding: '0rem 1.5rem 0rem .8rem',
@@ -56,8 +68,8 @@ export default function CourseCard() {
                 
 
                 }}>
-                    <Typography sx={{ fontWeight: 700, fontSize: 16, color: true ? 'black' : '#3987e0ff'}}>Web Design</Typography>
-                    <Typography sx={{ fontWeight: 700, fontSize: 12, color: '#535353ff'}}>Cisc 3150</Typography>
+                    <Typography sx={{ fontWeight: 700, fontSize: 16, color: true ? 'black' : '#3987e0ff'}}>{course.title}</Typography>
+                    <Typography sx={{ fontWeight: 700, fontSize: 12, color: '#535353ff'}}>{course.id}</Typography>
                     <Typography sx={{ fontWeight: 700, fontSize: 12, color: '#888888ff'}}>Tue, Thu: 1h 15m</Typography>
                 </Box>
             </Box>    

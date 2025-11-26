@@ -38,8 +38,8 @@ export default function Nav() {
                     }
                 }}}
         >
-            <Box sx={{ height: 200, pl: 4, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                <LogoDevRoundedIcon sx={{fontSize: 80, pr: 4}}/>
+            <Box sx={{ height: 165, pl: 4, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <LogoDevRoundedIcon sx={{fontSize: 75, pr: 4}}/>
                 {/* <Typography variant='h4'>Easy Flow</Typography> */}
             </Box>
             <NavButton href='/dashboard' icon='SpaceDashboard'>Dashboard</NavButton>

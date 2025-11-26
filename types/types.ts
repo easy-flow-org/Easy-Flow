@@ -1,8 +1,9 @@
 export interface Course {
   title: string;
   id: string;
-  startTime: number;
-  weekdays: string[];
+  startTime: string;
+  endTime: string;
+  weekdays: boolean[]; // sunday, monday...
 }
 
 export interface TodoProps {
