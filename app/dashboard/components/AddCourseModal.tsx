@@ -28,7 +28,12 @@ export default function AddCourseModal(props: ModalProps) {
       startTime: data.get('startTime') as string,
       endTime: data.get('endTime') as string,
     };
+    // add course CLIENT SIDE
     props.addNewCourse(newCourse)
+
+    // add course BACKEND SIDE
+
+    
     props.close()
   }
   //
