@@ -8,9 +8,18 @@ import Link from "next/link";
 import { useTheme } from '@mui/material/styles';
 import AddCourseModal from "./components/AddCourseModal";
 import { useState } from "react";
+import { Course } from "@/types/types";
 
 export default function Dashboard() {
   const theme = useTheme();
+
+  // Related to courses
+  const [courses, setCourses] = useState<Course[]>([...dummyContent.courses])
+
+  const addNewCourse = (newCourse: Course) => {
+    setCourses(prev => [...prev, newCourse]);
+  };
+  //
 
   // Related to add courses modal
   const [showAddCourseModal, setAddCourseModal] = useState(false)
@@ -39,7 +48,7 @@ export default function Dashboard() {
           <Paper variant="outlined" sx={{ p: 2, height: "456px", backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, borderColor: (t) => t.palette.divider }}>
             <Typography variant="h6" mb={1} fontWeight={700} sx={{ color: theme.palette.text.primary }}>Courses</Typography>
             <Stack gap={1} height={"380px"} overflow={"auto"}>
-              {dummyContent.courses.map((c) => (
+              {courses.map((c) => (
                 <CourseCard course={c} key={c.id} />
               ))}
             </Stack>
@@ -67,11 +76,11 @@ export default function Dashboard() {
             <Paper variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, }}>
               <Typography variant="h6" fontWeight={700} mb={1} sx={{ color: theme.palette.text.primary }}>Upcoming</Typography>
               <List>
-                {dummyContent.courses.slice(0, 3).map((c) => (
+                {courses.slice(0, 3).map((c) => (
                   <ListItem key={c.id} sx={{ p: 0, pb: 1 }}>
                     <Box sx={{ width: '100%' }}>
                       <Typography fontWeight={600}>{c.title}</Typography>
-                      <Typography variant="caption" color="text.secondary">{c.date} • {c.time}</Typography>
+                      <Typography variant="caption" color="text.secondary">{c.days.split(",")[0]} • {c.startTime < "12:00" ? c.startTime + " AM" : c.startTime + " PM"}</Typography>
                     </Box>
                   </ListItem>
                 ))}
@@ -112,7 +121,7 @@ export default function Dashboard() {
           </Stack>
         </Box>
       </Box>
-      <AddCourseModal open={showAddCourseModal} close={handleAddCourseClose}></AddCourseModal>
+      <AddCourseModal open={showAddCourseModal} close={handleAddCourseClose} addNewCourse={addNewCourse}></AddCourseModal>
     </Box>
   );
 }
