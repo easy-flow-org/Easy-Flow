@@ -5,10 +5,12 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, T
 import CourseDaySelector from "./CourseDaySelector";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { Course } from "@/types/types";
 
 type ModalProps = {
   open: boolean
-  close?: () => void
+  close: () => void
+  addNewCourse: (newCourse: Course) => void
 }
 
 export default function AddCourseModal(props: ModalProps) {
@@ -18,9 +20,16 @@ export default function AddCourseModal(props: ModalProps) {
     event.preventDefault()
     const form = event.currentTarget
     const data = new FormData(form)
-    const json = Object.fromEntries((data as any).entries());
-    console.log(json)
-    props.close?.()
+    const newCourse: Course = {
+      id: crypto.randomUUID(),
+      title: data.get('courseTitle') as string,
+      description: data.get('courseDescription') as string,
+      days: data.get('courseDays') as string,
+      startTime: data.get('startTime') as string,
+      endTime: data.get('endTime') as string,
+    };
+    props.addNewCourse(newCourse)
+    props.close()
   }
   //
 
@@ -54,9 +63,9 @@ export default function AddCourseModal(props: ModalProps) {
             <TextField
               inputRef={firstRef}
               autoFocus
-              id="course-name"
-              name="courseName"
-              label="Course Name"
+              id="course-title"
+              name="courseTitle"
+              label="Course Title"
               type="text"
               required
               {...sharedProps}
