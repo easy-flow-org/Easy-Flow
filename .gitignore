@@ -19,6 +19,7 @@ node_modules
 
 # production
 /build
+.github
 
 # misc
 .DS_Store
