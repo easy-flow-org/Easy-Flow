@@ -9,6 +9,7 @@ import { useTheme } from '@mui/material/styles';
 import AddCourseModal from "./components/AddCourseModal";
 import { useState } from "react";
 import { Course } from "@/types/types";
+import to12Hour from "@/lib/to12Hour";
 
 export default function Dashboard() {
   const theme = useTheme();
@@ -80,7 +81,7 @@ export default function Dashboard() {
                   <ListItem key={c.id} sx={{ p: 0, pb: 1 }}>
                     <Box sx={{ width: '100%' }}>
                       <Typography fontWeight={600}>{c.title}</Typography>
-                      <Typography variant="caption" color="text.secondary">{c.days.split(",")[0]} • {c.startTime < "12:00" ? c.startTime + " AM" : c.startTime + " PM"}</Typography>
+                      <Typography variant="caption" color="text.secondary">{c.days.split(",")[0]} • {to12Hour(c.startTime)}</Typography>
                     </Box>
                   </ListItem>
                 ))}
