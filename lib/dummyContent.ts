@@ -1,39 +1,44 @@
 const dummyContent = {
-  courses: [
+    courses: [
     {
-      id: 1,
+      id: crypto.randomUUID(),
       title: "MTH 4000",
-      date: "02-10-2025",
-      time: "9:00 AM",
-      description: "Introduction to calculus and mathematical reasoning"
+      description: "Introduction to calculus and mathematical reasoning",
+      days: "Monday,Wednesday,Friday",
+      startTime: "09:00",
+      endTime: "10:15"
     },
     {
-      id: 2,
+      id: crypto.randomUUID(),
       title: "CSC 2200",
-      date: "02-11-2025",
-      time: "11:00 AM",
-      description: "Fundamentals of programming, algorithms, and data structures"
+      description: "Fundamentals of programming, algorithms, and data structures",
+      days: "Tuesday,Thursday",
+      startTime: "11:00",
+      endTime: "12:15"
     },
     {
-      id: 3,
+      id: crypto.randomUUID(),
       title: "ENG 2100",
-      date: "02-12-2025",
-      time: "2:00 PM",
-      description: "Great works of literature from classical to modern periods"
+      description: "Great works of literature from classical to modern periods",
+      days: "Monday,Wednesday",
+      startTime: "14:00",
+      endTime: "15:15"
     },
     {
-      id: 4,
+      id: crypto.randomUUID(),
       title: "HIS 1001",
-      date: "02-13-2025",
-      time: "10:00 AM",
-      description: "Survey of early world history and major civilizations"
+      description: "Survey of early world history and major civilizations",
+      days: "Tuesday,Thursday",
+      startTime: "10:00",
+      endTime: "11:15"
     },
     {
-      id: 5,
+      id: crypto.randomUUID(),
       title: "JPN 1001",
-      date: "02-16-2025",
-      time: "10:00 AM",
-      description: "JPN 1001"
+      description: "Introductory Japanese language and culture",
+      days: "Friday",
+      startTime: "10:00",
+      endTime: "11:30"
     }
   ]
 }
