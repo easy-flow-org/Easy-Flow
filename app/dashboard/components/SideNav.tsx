@@ -10,7 +10,7 @@ const DRAWER_WIDTH = 230;
 const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: 'SpaceDashboard' },
   { label: 'Calendar', href: '/dashboard/calendar', icon: 'CalendarMonth' },
-  { label: 'Focus Mode', href: '/dashboard/focus-mode', icon: 'OfflineBolt' },
+  { label: 'Focus Mode', href: '/dashboard/pomodoro', icon: 'OfflineBolt' },
 ];
 
 export default function SideNav() {

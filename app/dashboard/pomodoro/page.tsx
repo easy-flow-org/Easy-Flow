@@ -1,6 +1,8 @@
 "use client"
 
+
 import HeroNav from "@/components/LandingPage/HeroNav";
+import SideNav from "@/app/dashboard/components/SideNav";
 import { 
   Box, 
   Button, 
@@ -100,7 +102,7 @@ export default function PomodoroPage(){
 
   return (
     <>
-      <HeroNav />
+      <SideNav />
       
       <Container maxWidth="md" sx={{ mt: 8, mb: 8 }}>
         <Box sx={{ textAlign: 'center' }}>
