@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "Easy Flow",
   description: "College platform",
 };
+import ThemeRegistry from "./theme";
 
 export default function RootLayout({
   children,
