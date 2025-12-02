@@ -53,7 +53,7 @@ export default function Dashboard() {
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', minHeight: '100vh', p: 2, backgroundColor: (t) => t.palette.background.default }}>
-      <Box sx={{ p: 2, minWidth: 800, width: '100%', maxWidth: 1200 }}>
+      <Box sx={{ minWidth: 800, width: '100%', maxWidth: 1200 }}>
         <Box
           sx={{
             display: 'grid',
@@ -64,11 +64,11 @@ export default function Dashboard() {
         >
 
           {/* Left: Courses list */}
-          <Paper variant="outlined" sx={{ p: 2, height: "456px", backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, borderColor: (t) => t.palette.divider }}>
+          <Paper variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, borderColor: (t) => t.palette.divider }}>
             <Link href="dashboard/courses" style={{ textDecoration: "none" }}>
               <Typography variant="h6" mb={1} fontWeight={700} sx={{ color: theme.palette.text.primary, width: "fit-content" }}>Courses</Typography>
             </Link>
-            <Stack gap={1} height={"380px"} overflow={"auto"}>
+            <Stack gap={1} overflow={"auto"} height={511}>
               {courses.map((c) => (
                 <CourseCard course={c} key={c.id} />
               ))}
@@ -76,8 +76,8 @@ export default function Dashboard() {
           </Paper>
 
           {/* Middle: Main panel (FocusChart + actions) */}
-          <Card variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+          <Card variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, height: "100%" }}>
+            <Stack direction={"row"} gap={2} sx={{ alignItems: "center" }}>
               <Box>
                 <Typography variant="h6" fontWeight={700}>Overview</Typography>
                 <Typography variant="body2" color="text.secondary">Snapshot of your focus and upcoming items</Typography>
@@ -87,8 +87,8 @@ export default function Dashboard() {
                   <Button variant="contained" color="secondary" sx={{ textTransform: 'none' }}>Start Focus Mode</Button>
                 </Link>
               </Box>
-            </Box>
-            <Divider sx={{ mb: 2 }} />
+            </Stack>
+            <Divider sx={{ mt: 5, mb: 5 }} />
             <FocusChart />
           </Card>
 
