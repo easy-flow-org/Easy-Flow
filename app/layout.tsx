@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { AuthProvider } from "./context/authContext";
+// import { AuthProvider } from "./context/authContext";
+import Theme from "./theme";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Easy Flow",
   description: "College platform",
 };
-import ThemeRegistry from "./theme";
 
 export default function RootLayout({
   children,
@@ -16,7 +16,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <Theme>
+          {/* <AuthProvider> */}
+          {children}
+          {/* </AuthProvider> */}
+        </Theme>
       </body>
     </html>
   );
