@@ -47,7 +47,9 @@ export default function Dashboard() {
 
           {/* Left: Courses list */}
           <Paper variant="outlined" sx={{ p: 2, height: "456px", backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, borderColor: (t) => t.palette.divider }}>
-            <Typography variant="h6" mb={1} fontWeight={700} sx={{ color: theme.palette.text.primary }}>Courses</Typography>
+            <Link href="dashboard/courses" style={{ textDecoration: "none" }}>
+              <Typography variant="h6" mb={1} fontWeight={700} sx={{ color: theme.palette.text.primary, width: "fit-content" }}>Courses</Typography>
+            </Link>
             <Stack gap={1} height={"380px"} overflow={"auto"}>
               {courses.map((c) => (
                 <CourseCard course={c} key={c.id} />
