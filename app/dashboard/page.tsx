@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Card, Stack, Typography, Paper, Button, Divider, Chip } from "@mui/material";
+import { Box, Card, Stack, Typography, Paper, Button, Divider, Chip, Tooltip } from "@mui/material";
 import CourseCard from "./components/CourseCard";
 import FocusChart from "./components/FocusChart";
 import dummyContent from "@/lib/dummyContent";
@@ -67,7 +67,7 @@ export default function Dashboard() {
           {/* Left: Courses list */}
           <Paper variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, borderColor: (t) => t.palette.divider }}>
             <Link href="dashboard/courses" style={{ textDecoration: "none" }}>
-              <Typography variant="h6" mb={1} fontWeight={700} sx={{ color: theme.palette.text.primary, width: "fit-content" }}>Courses</Typography>
+              <Tooltip title="See all Courses"><Typography variant="h6" mb={1} fontWeight={700} sx={{ color: theme.palette.text.primary, width: "fit-content" }}>Courses</Typography></Tooltip>
             </Link>
             <Stack gap={1} overflow={"auto"} height={511}>
               {courses.map((c) => (
@@ -97,7 +97,9 @@ export default function Dashboard() {
           <Stack spacing={2}>
             <Paper variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, }}>
               <Link href={"dashboard/tasks"} style={{ textDecoration: "none" }} >
-                <Typography variant="h6" fontWeight={700} sx={{ color: theme.palette.text.primary, mb: 1 }}>Upcoming Tasks</Typography>
+                <Tooltip title="See all tasks" placement="bottom-start">
+                  <Typography variant="h6" fontWeight={700} sx={{ color: theme.palette.text.primary, mb: 1 }}>Upcoming Tasks</Typography>
+                </Tooltip>
               </Link>
               <Stack spacing={1}>
                 {/* Task Cards */}
