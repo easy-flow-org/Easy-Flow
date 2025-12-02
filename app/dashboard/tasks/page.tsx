@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import { useContext, useState } from "react"
 import {
   Box,
   Paper,
@@ -12,8 +12,9 @@ import {
   Checkbox,
 } from "@mui/material"
 import { Edit, Delete } from "@mui/icons-material"
-import dummyContent from "@/lib/dummyContent"
 import { Task } from "@/types/types"
+import AddTaskModal from "../components/AddTaskModal"
+import dummyContent from "@/lib/dummyContent"
 
 function formatDueDate(d?: Date | string) {
   if (!d) return "No due date"
@@ -27,8 +28,35 @@ function formatDueDate(d?: Date | string) {
 }
 
 export default function TasksPage() {
-  // Keep a local copy of tasks so the UI is interactive
-  const [tasks, setTasks] = useState<Task[]>(() => [...(dummyContent.tasks ?? [])])
+  // local tasks state (single source for this page)
+  const [tasks, setTasks] = useState<Task[]>([...(dummyContent.tasks ?? [])])
+
+  // modal state
+  const [showModal, setShowModal] = useState(false)
+  const [editingTask, setEditingTask] = useState<Task | null>(null)
+
+  const openNew = () => {
+    setEditingTask(null)
+    setShowModal(true)
+  }
+
+  const openEdit = (t: Task) => {
+    setEditingTask(t)
+    setShowModal(true)
+  }
+
+  const closeModal = () => {
+    setEditingTask(null)
+    setShowModal(false)
+  }
+
+  const addOrUpdateTask = (task: Task) => {
+    setTasks((prev) => {
+      const exists = prev.find((p) => p.id === task.id)
+      if (exists) return prev.map((p) => (p.id === task.id ? task : p))
+      return [task, ...prev]
+    })
+  }
 
   const toggleComplete = (id: string) => {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)))
@@ -36,32 +64,6 @@ export default function TasksPage() {
 
   const removeTask = (id: string) => {
     setTasks((prev) => prev.filter((t) => t.id !== id))
-  }
-
-  const editTask = (id: string) => {
-    const t = tasks.find((x) => x.id === id)
-    if (!t) return
-    const title = window.prompt("Edit task title", t.title)
-    if (title == null) return
-    setTasks((prev) => prev.map((x) => (x.id === id ? { ...x, title } : x)))
-  }
-
-  // FIX this using Add Task Modal (need to make the modal)
-  const addTask = () => {
-    const title = window.prompt("New task title")
-    if (!title) return
-    const newTask: Task = {
-      id: crypto.randomUUID(),
-      title,
-      notes: "",
-      dueDate: new Date(),
-      importance: "Easy",
-      completed: false,
-      onToggleComplete: () => {},
-      onEdit: () => {},
-      onDelete: () => {},
-    }
-    setTasks((prev) => [newTask, ...prev])
   }
 
   const importanceColor = (importance: Task["importance"]) => {
@@ -79,14 +81,14 @@ export default function TasksPage() {
     <Box sx={{ p: 2 }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
         <Typography variant="h5" fontWeight={700}>Tasks</Typography>
-        <Button variant="contained" color="secondary" onClick={addTask}>New Task</Button>
+        <Button variant="contained" color="secondary" onClick={openNew}>New Task</Button>
       </Stack>
 
       <Stack spacing={2}>
         {tasks.map((task) => (
           <Paper key={task.id} variant="outlined" sx={{ p: 2, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start", minWidth: 0 }}>
-              <Checkbox checked={task.completed} onChange={() => toggleComplete(task.id)} />
+              <Checkbox color="secondary" checked={task.completed} onChange={() => toggleComplete(task.id)} />
               <Box sx={{ minWidth: 0 }}>
                 <Typography variant="subtitle1" sx={{ textDecoration: task.completed ? "line-through" : "none" }}>{task.title}</Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: .5 }}>{task.notes || "No notes"}</Typography>
@@ -96,7 +98,7 @@ export default function TasksPage() {
 
             <Stack direction="row" spacing={1} alignItems="center">
               <Chip label={task.importance} size="small" color={importanceColor(task.importance)} />
-              <IconButton size="small" onClick={() => editTask(task.id)} aria-label="edit">
+              <IconButton size="small" onClick={() => openEdit(task)} aria-label="edit">
                 <Edit fontSize="small" />
               </IconButton>
               <IconButton size="small" onClick={() => removeTask(task.id)} aria-label="delete">
@@ -106,6 +108,7 @@ export default function TasksPage() {
           </Paper>
         ))}
       </Stack>
+      <AddTaskModal open={showModal} close={closeModal} addNewTask={addOrUpdateTask} initialTask={editingTask} />
     </Box>
   )
 }

@@ -3,8 +3,6 @@
 import React, { useEffect, useRef } from "react"
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, TextFieldProps, MenuItem } from "@mui/material";
 import { Task } from "@/types/types";
-import Link from "next/link";
-import dummyContent from "@/lib/dummyContent";
 
 type ModalProps = {
   open: boolean
@@ -112,7 +110,7 @@ export default function AddTaskModal(props: ModalProps) {
         </form>
       </DialogContent>
       <DialogActions>
-        <Button type="submit" form="add-task-form" variant="contained" color="secondary" sx={{ textTransform: 'none' }}><Link href={"dashboard/tasks"} style={{ textDecoration: "none", color: "inherit" }}>Done</Link></Button>
+        <Button type="submit" form="add-task-form" variant="contained" color="secondary" sx={{ textTransform: 'none' }}>Done</Button>
         <Button onClick={props.close} variant="outlined" color="inherit" sx={{ textTransform: 'none' }}>Cancel</Button>
       </DialogActions>
     </Dialog>
