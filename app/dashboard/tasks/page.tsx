@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import {
   Box,
   Paper,
@@ -15,6 +15,7 @@ import { Edit, Delete } from "@mui/icons-material"
 import { Task } from "@/types/types"
 import AddTaskModal from "../components/AddTaskModal"
 import dummyContent from "@/lib/dummyContent"
+import { getTasks } from "@/firebase/firestore"
 
 function formatDueDate(d?: Date | string) {
   if (!d) return "No due date"
@@ -29,7 +30,17 @@ function formatDueDate(d?: Date | string) {
 
 export default function TasksPage() {
   // local tasks state (single source for this page)
-  const [tasks, setTasks] = useState<Task[]>([...(dummyContent.tasks ?? [])])
+  const [tasks, setTasks] = useState<Task[]>([])
+
+  //
+  const updateTasks = async () => {
+    setTasks(await getTasks())
+  }
+
+  useEffect(() => {
+    updateTasks()
+  }, [])
+
 
   // modal state
   const [showModal, setShowModal] = useState(false)
