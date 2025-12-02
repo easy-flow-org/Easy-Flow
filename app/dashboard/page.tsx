@@ -9,6 +9,7 @@ import { useTheme } from '@mui/material/styles';
 import AddCourseModal from "./components/AddCourseModal";
 import { useState } from "react";
 import { Course, Task } from "@/types/types";
+import AddTaskModal from "./components/AddTaskModal";
 
 export default function Dashboard() {
   const theme = useTheme();
@@ -124,7 +125,7 @@ export default function Dashboard() {
                   color="secondary"
                   fullWidth
                   sx={{ textTransform: 'none' }}
-                  onClick={() => alert('New Task — not implemented')}
+                  onClick={handleAddTaskOpen}
                 >
                   New Task
                 </Button>
@@ -152,6 +153,7 @@ export default function Dashboard() {
         </Box>
       </Box>
       <AddCourseModal open={showAddCourseModal} close={handleAddCourseClose} addNewCourse={addNewCourse}></AddCourseModal>
+      <AddTaskModal open={showAddTaskModal} close={handleAddTaskClose} addNewTask={addNewTask}></AddTaskModal>
     </Box>
   );
 }
