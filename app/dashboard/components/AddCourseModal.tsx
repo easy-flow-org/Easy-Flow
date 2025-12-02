@@ -11,6 +11,7 @@ type ModalProps = {
   open: boolean
   close: () => void
   addNewCourse: (newCourse: Course) => void
+  initialCourse?: Course | null
 }
 
 export default function AddCourseModal(props: ModalProps) {
@@ -21,7 +22,7 @@ export default function AddCourseModal(props: ModalProps) {
     const form = event.currentTarget
     const data = new FormData(form)
     const newCourse: Course = {
-      id: crypto.randomUUID(),
+      id: props.initialCourse?.id ?? crypto.randomUUID(),
       title: data.get('courseTitle') as string,
       description: data.get('courseDescription') as string,
       days: data.get('courseDays') as string,
@@ -61,7 +62,7 @@ export default function AddCourseModal(props: ModalProps) {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Dialog open={props.open} onClose={props.close}>
-        <DialogTitle>Add New Course</DialogTitle>
+        <DialogTitle>{props.initialCourse ? "Edit Course" : "Add New Course"}</DialogTitle>
         <DialogContent sx={{ width: "100%", maxWidth: "400px" }}>
           {/* This is the actual modal form */}
           <form onSubmit={handleSubmit} action="#" id="add-course-form">
@@ -73,16 +74,18 @@ export default function AddCourseModal(props: ModalProps) {
               label="Course Title"
               type="text"
               required
+              defaultValue={props.initialCourse?.title ?? ''}
               {...sharedProps}
               sx={{ width: "100%", maxWidth: "320px" }}
             />
-            <CourseDaySelector></CourseDaySelector>
+            <CourseDaySelector initialDays={props.initialCourse?.days} />
             <TextField
               id="course-start-time"
               name="startTime"
               label="Start Time"
               type="time"
               required
+              defaultValue={props.initialCourse?.startTime ?? ''}
               {...sharedProps}
             />
             <TextField
@@ -91,6 +94,7 @@ export default function AddCourseModal(props: ModalProps) {
               label="End Time"
               type="time"
               required
+              defaultValue={props.initialCourse?.endTime ?? ''}
               {...sharedProps}
               sx={{ ml: 2 }}
             />
@@ -99,6 +103,7 @@ export default function AddCourseModal(props: ModalProps) {
               name="courseDescription"
               label="Course Description"
               type="text"
+              defaultValue={props.initialCourse?.description ?? ''}
               {...sharedProps}
               multiline
               rows={4}
