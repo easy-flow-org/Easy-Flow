@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Card, Stack, Typography, Paper, Button, List, ListItem, Divider } from "@mui/material";
+import { Box, Card, Stack, Typography, Paper, Button, Divider, Chip } from "@mui/material";
 import CourseCard from "./components/CourseCard";
 import FocusChart from "./components/FocusChart";
 import dummyContent from "@/lib/dummyContent";
@@ -8,8 +8,7 @@ import Link from "next/link";
 import { useTheme } from '@mui/material/styles';
 import AddCourseModal from "./components/AddCourseModal";
 import { useState } from "react";
-import { Course } from "@/types/types";
-import to12Hour from "@/lib/to12Hour";
+import { Course, Task } from "@/types/types";
 
 export default function Dashboard() {
   const theme = useTheme();
@@ -30,6 +29,25 @@ export default function Dashboard() {
 
   const handleAddCourseClose = () => {
     setAddCourseModal(false);
+  };
+  //
+
+  // Related to tasks
+  const [tasks, setTasks] = useState<Task[]>([...dummyContent.tasks])
+
+  const addNewTask = (newTask: Task) => {
+    setTasks(prev => [...prev, newTask])
+  }
+  //
+
+  // Related to add new task modal
+  const [showAddTaskModal, setAddTaskModal] = useState(false)
+  const handleAddTaskOpen = () => {
+    setAddTaskModal(true);
+  };
+
+  const handleAddTaskClose = () => {
+    setAddTaskModal(false);
   };
   //
 
@@ -77,17 +95,26 @@ export default function Dashboard() {
           {/* Right: Upcoming & quick actions */}
           <Stack spacing={2}>
             <Paper variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, }}>
-              <Typography variant="h6" fontWeight={700} mb={1} sx={{ color: theme.palette.text.primary }}>Upcoming</Typography>
-              <List>
-                {courses.slice(0, 3).map((c) => (
-                  <ListItem key={c.id} sx={{ p: 0, pb: 1 }}>
-                    <Box sx={{ width: '100%' }}>
-                      <Typography fontWeight={600}>{c.title}</Typography>
-                      <Typography variant="caption" color="text.secondary">{c.days.split(",")[0]} • {to12Hour(c.startTime)}</Typography>
+              <Link href={"dashboard/tasks"} style={{ textDecoration: "none" }} >
+                <Typography variant="h6" fontWeight={700} sx={{ color: theme.palette.text.primary, mb: 1 }}>Upcoming Tasks</Typography>
+              </Link>
+              <Stack spacing={1}>
+                {/* Task Cards */}
+                {tasks.slice(0, 3).map((task) => (
+                  <Paper key={task.id} variant="outlined" sx={{ p: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Box>
+                      <Typography variant="subtitle1" fontWeight={600}>{task.title}</Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {(() => {
+                          const d = task.dueDate instanceof Date ? task.dueDate : new Date(task.dueDate as any)
+                          return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+                        })()}
+                      </Typography>
                     </Box>
-                  </ListItem>
+                    <Chip label={task.importance} size="small" color={task.importance === 'Hard' ? 'error' : task.importance === 'Medium' ? 'warning' : 'default'} />
+                  </Paper>
                 ))}
-              </List>
+              </Stack>
             </Paper>
             <Paper variant="outlined" sx={{ p: 1.5, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1 }}>
               <Typography variant="h6" fontWeight={700} mb={1} sx={{ color: theme.palette.text.primary }}>Quick Actions</Typography>
