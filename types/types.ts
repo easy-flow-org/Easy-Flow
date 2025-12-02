@@ -7,10 +7,14 @@ export interface Course {
   endTime: string;
 }
 
-export interface TodoProps {
+export interface Task {
   id: string;
-  text: string;
+  title: string;
+  notes: string;
+  dueDate: Date;
+  importance: "Easy" | "Medium" | "Hard";
   completed: boolean;
-  onToggle: (id: string) => void;
+  onToggleComplete: (id: string) => void;
+  onEdit: (id: string) => void;
   onDelete: (id: string) => void;
 };

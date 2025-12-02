@@ -9,6 +9,8 @@ const DRAWER_WIDTH = 230;
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: 'SpaceDashboard' },
+  { label: 'Courses', href: '/dashboard/courses', icon: 'AutoStories' },
+  { label: 'Tasks', href: '/dashboard/tasks', icon: 'FolderSpecial' },
   { label: 'Calendar', href: '/dashboard/calendar', icon: 'CalendarMonth' },
   { label: 'Focus Mode', href: '/dashboard/pomodoro', icon: 'OfflineBolt' },
 ];
