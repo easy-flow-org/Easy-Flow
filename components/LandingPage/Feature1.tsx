@@ -1,66 +1,47 @@
 "use client"
 
+import Link from "next/link";
 import { ArrowRight, ArrowRightOutlined } from "@mui/icons-material";
 import { Stack, Typography, Card, CardContent, Box, CardActions, Button } from "@mui/material";
 
 export default function Feature1() {
-  const cardMinWidth = { xs: 230, sm: 330 };
-  const previewBoxSizes = { xs: 230, sm: 330 };
-  const previewBoxMargins = { xs: "auto" };
-
   const cards = [
     {
-      title: "Import Your Syllabus in Seconds",
-      desc: "Send class deadlines to your calendar.",
+      title: 'Tasks: Add & Track',
+      desc: 'Create tasks, set due dates, and mark progress. Your to-dos in one place.',
+      href: '/dashboard/tasks',
     },
     {
-      title: "Stay on Top of Every Task",
-      desc: "All your notes and to-dos in one place.",
+      title: 'Courses: Add Classes',
+      desc: 'Add courses, set meeting days and times, and keep your schedule organized.',
+      href: '/dashboard/courses',
     },
     {
-      title: "Focus Without Distractions",
-      desc: "Block noise, lock in, and get work done.",
+      title: 'Focus Mode',
+      desc: 'Start distraction-free sessions to get work done faster.',
+      href: '/dashboard/focus-mode',
     },
-  ].map((card) => (
-    <Card sx={{ minWidth: cardMinWidth }}>
-      <CardContent>
-        <Typography variant="h6" align={"center"}>
-          {card.title}
-        </Typography>
-        <Typography variant="body1" color="text.secondary" align={"center"}>
-          {card.desc}
-        </Typography>
-        <Box
-          sx={{
-            bgcolor: "whitesmoke",
-            height: previewBoxSizes,
-            width: previewBoxSizes,
-            borderRadius: 2,
-            mx: previewBoxMargins,
-            mb: previewBoxMargins,
-            mt: 1,
-          }}
-        ></Box>
-      </CardContent>
-    </Card>
-  ));
+  ]
 
   return (
-    <>
-      <Stack
-        direction={"column"}
-        sx={{
-          padding: "4rem 1rem 7rem 1rem",
-          backgroundColor: "whitesmoke",
-        }}
-      >
-        <Typography variant="h4" align="center">
-          Keep Up Effortlessly
-        </Typography>
-        <Stack direction={"row"} justifyContent={"center"} marginTop={4} flexWrap={"wrap"} gap={3}>
-          {cards}
-        </Stack>
+    <Stack
+      direction="column"
+      sx={{ padding: { xs: '3rem 1rem', md: '4rem 2rem' }, backgroundColor: 'whitesmoke' }}
+    >
+      <Typography variant="h4" align="center">Core Features</Typography>
+      <Stack direction={{ xs: 'column', md: 'row' }} gap={3} justifyContent="center" sx={{ mt: 3 }}>
+        {cards.map((c) => (
+          <Card key={c.title} sx={{ width: { xs: '100%', md: 320 } }}>
+            <CardContent>
+              <Typography variant="h6" align="center">{c.title}</Typography>
+              <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 1 }}>{c.desc}</Typography>
+            </CardContent>
+            <CardActions sx={{ justifyContent: 'center' }}>
+              <Button component={Link} href={c.href} size="small" color="secondary" variant="contained" sx={{ textTransform: 'none' }}>Try it</Button>
+            </CardActions>
+          </Card>
+        ))}
       </Stack>
-    </>
-  );
+    </Stack>
+  )
 }
