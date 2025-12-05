@@ -15,7 +15,8 @@ import { Edit, Delete } from "@mui/icons-material"
 import { Task } from "@/types/types"
 import AddTaskModal from "../components/AddTaskModal"
 import dummyContent from "@/lib/dummyContent"
-import { getTasks, createTask, deleteTask, updateTask } from "@/firebase/firestore"
+import { getTasks, getUserTasks, createTask, deleteTask, updateTask } from "@/firebase/firestore"
+import { useAuth } from "@/app/context/authContext"
 
 function formatDueDate(d?: Date | string) {
   if (!d) return "No due date"
@@ -31,15 +32,21 @@ function formatDueDate(d?: Date | string) {
 export default function TasksPage() {
   // local tasks state (single source for this page)
   const [tasks, setTasks] = useState<Task[]>([])
+  const { user } = useAuth();
 
   //
-  const updateTasks = async () => {
-    setTasks(await getTasks())
+  const updateTasks = async (uid: string) => {
+    //setTasks(await getUserTasks(user.uid))
   }
 
   useEffect(() => {
-    updateTasks()
-  }, [])
+    console.log(!user);
+    if (!user) return;
+    (async () => {
+      const tasks = await getUserTasks(user.uid);
+      setTasks(tasks);
+    })();
+  }, [user])
 
 
   // modal state
@@ -62,13 +69,16 @@ export default function TasksPage() {
   }
 
   const addOrUpdateTask = async (task: Task) => {
-
     const exists = tasks.find(t => t.id === task.id);
 
     if (!exists) {
       // Create in Firestore first
-      const created = await createTask("testID", task); // returns { id, ... }
-      
+      if (!user) {
+        console.log("user doesn't exist");
+        return;
+      };
+      const created = await createTask(user.uid, task); // returns { id, ... }
+
       const hydrated: Task = {
         ...created,
         dueDate: created.dueDate.toDate(),
@@ -84,7 +94,7 @@ export default function TasksPage() {
 
     // If exists, update Firestore + state
     await updateTask(task.id, task);
-    
+
     setTasks(prev =>
       prev.map(p => p.id === task.id ? task : p)
     );
@@ -96,7 +106,7 @@ export default function TasksPage() {
 
   const removeTask = (id: string) => {
     setTasks((prev) => prev.filter((t) => t.id !== id))
-    deleteTask(id)         
+    deleteTask(id)
   }
 
   const importanceColor = (importance: Task["importance"]) => {

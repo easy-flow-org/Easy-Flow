@@ -43,7 +43,7 @@ export async function getUserTasks(userId: string) {
   const q = query(
     tasksCollection,
     where('userId', '==', userId),
-    orderBy('createdAt', 'desc')
+    //orderBy('title', 'desc')
   )
   const snapshot = await getDocs(q)
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Task))
