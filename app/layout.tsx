@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-// import { AuthProvider } from "./context/authContext";
+import { AuthProvider } from "./context/authContext";
 import Theme from "./theme";
 import "./globals.css";
 
@@ -17,9 +17,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Theme>
-          {/* <AuthProvider> */}
+          <AuthProvider>
           {children}
-          {/* </AuthProvider> */}
+          </AuthProvider>
         </Theme>
       </body>
     </html>

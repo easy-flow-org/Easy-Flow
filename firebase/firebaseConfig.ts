@@ -17,3 +17,5 @@ export const db = getFirestore(app);
 
 // Google provider for sign in / sign up
 export const googleProvider = new GoogleAuthProvider();
+
+console.log("firebaseConfig", firebaseConfig);
