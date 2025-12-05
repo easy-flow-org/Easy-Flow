@@ -15,7 +15,7 @@ import { Edit, Delete } from "@mui/icons-material"
 import { Task } from "@/types/types"
 import AddTaskModal from "../components/AddTaskModal"
 import dummyContent from "@/lib/dummyContent"
-import { getTasks } from "@/firebase/firestore"
+import { getTasks, createTask, deleteTask, updateTask } from "@/firebase/firestore"
 
 function formatDueDate(d?: Date | string) {
   if (!d) return "No due date"
@@ -64,9 +64,19 @@ export default function TasksPage() {
   const addOrUpdateTask = (task: Task) => {
     setTasks((prev) => {
       const exists = prev.find((p) => p.id === task.id)
-      if (exists) return prev.map((p) => (p.id === task.id ? task : p))
+      if (exists) {
+        return prev.map((p) => (p.id === task.id ? task : p))
+      }
       return [task, ...prev]
     })
+
+    // Side effect outside of setTasks
+    if (!tasks.find((t) => t.id === task.id)) {
+      createTask("user", task)                    // incorrect usage of createTask, I just wanted to see if I could add something
+    }
+    else {
+      //updateTask("...", task);
+    }
   }
 
   const toggleComplete = (id: string) => {
@@ -75,6 +85,7 @@ export default function TasksPage() {
 
   const removeTask = (id: string) => {
     setTasks((prev) => prev.filter((t) => t.id !== id))
+    // deleteTask("...")         
   }
 
   const importanceColor = (importance: Task["importance"]) => {

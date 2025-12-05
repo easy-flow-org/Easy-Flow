@@ -23,8 +23,9 @@ export const tasksCollection = collection(db, 'tasks');
 
 export const timestampToDate = (timestamp: Timestamp) => timestamp.toDate();
 
-export async function createTask(taskData: Partial<Task>) {
+export async function createTask(userId: string, taskData: Partial<Task>) {
   const task = {
+    userId,
     title: taskData.title || "",
     notes: taskData.notes || "",
     dueDate: taskData.dueDate ? Timestamp.fromDate(taskData.dueDate) : Timestamp.now(),
@@ -35,7 +36,7 @@ export async function createTask(taskData: Partial<Task>) {
   return { id: docRef.id, ...task }
 }
 
-export async function getUserTodos(userId: string) {
+export async function getUserTasks(userId: string) {
   const q = query(
     tasksCollection,
     where('userId', '==', userId),
@@ -52,7 +53,11 @@ export async function updateTask(taskId: string, data: Partial<Task>) {
   })
 }
 
-export async function getTasks(): Promise<Task[]> {
+export async function deleteTask(taskId: string) {
+  await deleteDoc(doc(tasksCollection, taskId))
+}
+
+export async function getTasks(): Promise<Task[]> { 
   const q = query(
     tasksCollection
   )
