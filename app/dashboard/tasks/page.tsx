@@ -61,22 +61,33 @@ export default function TasksPage() {
     setShowModal(false)
   }
 
-  const addOrUpdateTask = (task: Task) => {
-    setTasks((prev) => {
-      const exists = prev.find((p) => p.id === task.id)
-      if (exists) {
-        return prev.map((p) => (p.id === task.id ? task : p))
-      }
-      return [task, ...prev]
-    })
+  const addOrUpdateTask = async (task: Task) => {
 
-    // Side effect outside of setTasks
-    if (!tasks.find((t) => t.id === task.id)) {
-      createTask("user", task)                    // incorrect usage of createTask, I just wanted to see if I could add something
+    const exists = tasks.find(t => t.id === task.id);
+
+    if (!exists) {
+      // Create in Firestore first
+      const created = await createTask("testID", task); // returns { id, ... }
+      
+      const hydrated: Task = {
+        ...created,
+        dueDate: created.dueDate.toDate(),
+        onToggleComplete: task.onToggleComplete,
+        onEdit: task.onEdit,
+        onDelete: task.onDelete,
+      };
+
+      // Now update state with real Firestore ID
+      setTasks(prev => [hydrated, ...prev]);
+      return;
     }
-    else {
-      //updateTask("...", task);
-    }
+
+    // If exists, update Firestore + state
+    await updateTask(task.id, task);
+    
+    setTasks(prev =>
+      prev.map(p => p.id === task.id ? task : p)
+    );
   }
 
   const toggleComplete = (id: string) => {
@@ -85,7 +96,7 @@ export default function TasksPage() {
 
   const removeTask = (id: string) => {
     setTasks((prev) => prev.filter((t) => t.id !== id))
-    // deleteTask("...")         
+    deleteTask(id)         
   }
 
   const importanceColor = (importance: Task["importance"]) => {

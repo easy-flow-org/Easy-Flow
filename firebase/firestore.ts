@@ -3,6 +3,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  setDoc,
   addDoc,
   updateDoc,
   deleteDoc,
@@ -24,16 +25,18 @@ export const tasksCollection = collection(db, 'tasks');
 export const timestampToDate = (timestamp: Timestamp) => timestamp.toDate();
 
 export async function createTask(userId: string, taskData: Partial<Task>) {
+  const docRef = doc(tasksCollection);
   const task = {
     userId,
+    id: docRef.id,
     title: taskData.title || "",
     notes: taskData.notes || "",
     dueDate: taskData.dueDate ? Timestamp.fromDate(taskData.dueDate) : Timestamp.now(),
     importance: taskData.importance || "Easy",
     completed: taskData.completed || false,
   }
-  const docRef = await addDoc(tasksCollection, task)
-  return { id: docRef.id, ...task }
+  await setDoc(docRef, task)
+  return task;
 }
 
 export async function getUserTasks(userId: string) {
@@ -46,15 +49,21 @@ export async function getUserTasks(userId: string) {
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Task))
 }
 
-export async function updateTask(taskId: string, data: Partial<Task>) {
+export async function updateTask(taskId: string, taskData: Partial<Task>) {
   const taskRef = doc(tasksCollection, taskId)
-  await updateDoc(taskRef, {
-    ...data
+  await updateDoc(taskRef, {                          
+    id: taskId,
+    title: taskData.title || "",
+    notes: taskData.notes || "",
+    dueDate: taskData.dueDate ? Timestamp.fromDate(taskData.dueDate) : Timestamp.now(),
+    importance: taskData.importance || "Easy",
+    completed: taskData.completed || false,
   })
 }
 
 export async function deleteTask(taskId: string) {
   await deleteDoc(doc(tasksCollection, taskId))
+  console.log(`delete of ${taskId} successful`);
 }
 
 export async function getTasks(): Promise<Task[]> { 

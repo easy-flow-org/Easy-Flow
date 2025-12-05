@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from "react"
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, TextFieldProps, MenuItem } from "@mui/material";
 import { Task } from "@/types/types";
+import { getTasks, createTask, deleteTask, updateTask } from "@/firebase/firestore"
 
 type ModalProps = {
   open: boolean
@@ -29,13 +30,15 @@ export default function AddTaskModal(props: ModalProps) {
   }
 
   // handle submit
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const form = event.currentTarget
     const data = new FormData(form)
     const dueRaw = data.get('dueDate') as string | null
     const due = dueRaw ? new Date(dueRaw) : new Date()
 
+    //const newTask = await createTask(userId, taskData)
+  
     const newTask: Task = {
       id: props.initialTask?.id ?? crypto.randomUUID(),
       title: (data.get('title') as string) ?? '',
