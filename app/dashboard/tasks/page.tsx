@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useState } from "react"
+import { useState } from "react"
 import {
   Box,
   Paper,
@@ -81,7 +81,7 @@ export default function TasksPage() {
     <Box sx={{ p: 2 }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
         <Typography variant="h5" fontWeight={700}>Tasks</Typography>
-        <Button variant="contained" color="secondary" onClick={openNew}>New Task</Button>
+        <Button variant="contained" color="secondary" onClick={openNew} sx={{ textTransform: "none" }}>New Task</Button>
       </Stack>
 
       <Stack spacing={2}>
