@@ -13,6 +13,7 @@ type ModalProps = {
 
 export default function AddTaskModal(props: ModalProps) {
 
+  // For autofocus of form
   const titleRef = useRef<HTMLInputElement | null>(null)
   useEffect(() => {
     if (props.open) {
@@ -20,6 +21,7 @@ export default function AddTaskModal(props: ModalProps) {
       return () => clearTimeout(t)
     }
   }, [props.open])
+  //
 
   function formatForInput(d?: Date | string) {
     if (!d) return ''
@@ -43,9 +45,6 @@ export default function AddTaskModal(props: ModalProps) {
       dueDate: due,
       importance: (data.get('importance') as Task['importance']) ?? 'Easy',
       completed: props.initialTask?.completed ?? false,
-      onToggleComplete: (id: string) => { },
-      onEdit: (id: string) => { },
-      onDelete: (id: string) => { },
     }
 
     props.addNewTask(newTask)
@@ -53,7 +52,6 @@ export default function AddTaskModal(props: ModalProps) {
   }
 
   const sharedProps: Partial<TextFieldProps> = {
-    margin: "normal",
     variant: "outlined",
     color: "secondary",
     size: "small",
@@ -72,7 +70,7 @@ export default function AddTaskModal(props: ModalProps) {
             required
             defaultValue={props.initialTask?.title ?? ''}
             {...sharedProps}
-            sx={{ width: '100%', maxWidth: 320 }}
+            sx={{ width: '100%', maxWidth: 320, mt: 1, mb: 2 }}
           />
 
           <TextField
@@ -82,7 +80,7 @@ export default function AddTaskModal(props: ModalProps) {
             rows={4}
             defaultValue={props.initialTask?.notes ?? ''}
             {...sharedProps}
-            sx={{ width: '100%', maxWidth: 320 }}
+            sx={{ width: '100%', maxWidth: 320, mb: 2 }}
           />
 
           <TextField
@@ -90,9 +88,8 @@ export default function AddTaskModal(props: ModalProps) {
             label="Due Date"
             type="datetime-local"
             defaultValue={formatForInput(props.initialTask?.dueDate)}
-            InputLabelProps={{ shrink: true }}
             {...sharedProps}
-            sx={{ width: '100%', maxWidth: 320 }}
+            sx={{ width: '100%', maxWidth: 320, mb: 2 }}
           />
 
           <TextField
@@ -101,7 +98,7 @@ export default function AddTaskModal(props: ModalProps) {
             label="Importance"
             defaultValue={props.initialTask?.importance ?? 'Easy'}
             {...sharedProps}
-            sx={{ width: '100%', maxWidth: 320 }}
+            sx={{ width: '100%', maxWidth: 320, mb: 2 }}
           >
             <MenuItem value="Easy">Easy</MenuItem>
             <MenuItem value="Medium">Medium</MenuItem>

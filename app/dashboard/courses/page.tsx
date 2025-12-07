@@ -1,32 +1,44 @@
 "use client"
 
-import React, { useState } from "react"
+import { useState } from "react"
 import { Box, Paper, List, ListItemButton, ListItemText, Typography, Divider, Stack, Button } from "@mui/material"
 import dummyContent from "@/lib/dummyContent"
 import { Course } from "@/types/types"
 import to12Hour from "@/lib/to12Hour"
 import AddCourseModal from "../components/AddCourseModal"
+import getDateAbbrev from "@/lib/getDateAbbrev"
 
 export default function Courses() {
-  // Selected is a Course Type, or null
-  const [selected, setSelected] = useState<Course | null>(null)
-
-  // Related to edit course modal
-  // Manage courses locally so we can edit
+  // Load dummy course data
   const [courses, setCourses] = useState<Course[]>([...dummyContent.courses])
+  //
 
+  // Track the current user clicked on (selected) course
+  const [selected, setSelected] = useState<Course | null>(null)
+  //
+
+  // Related to showing/hiding modal
   const [showAddCourseModal, setShowAddCourseModal] = useState(false)
-  const [editingCourse, setEditingCourse] = useState<Course | null>(null)
 
-  const openEdit = (course: Course) => {
-    setEditingCourse(course)
+  const addCourse = () => {
     setShowAddCourseModal(true)
   }
 
   const closeModal = () => {
-    setEditingCourse(null)
     setShowAddCourseModal(false)
+    setTimeout(() => {
+      setCourseToEdit(null)
+    }, 500);
   }
+  //
+
+  // Related to setting course user wants to edit
+  const [courseToEdit, setCourseToEdit] = useState<Course | null>(null)
+  const editCourse = (course: Course) => {
+    setCourseToEdit(course)
+    setShowAddCourseModal(true)
+  }
+  //
 
   const addOrUpdateCourse = (newCourse: Course) => {
     setCourses((prev) => {
@@ -41,39 +53,15 @@ export default function Courses() {
     closeModal()
   }
 
-  function getDateAbbrev(days: string) {
-    return days
-      .split(",")
-      .map((d) => d.trim())
-      .map((day) => {
-        switch (day.toLowerCase()) {
-          case "monday":
-            return "Mon"
-          case "tuesday":
-            return "Tues"
-          case "wednesday":
-            return "Wed"
-          case "thursday":
-            return "Thurs"
-          case "friday":
-            return "Fri"
-          case "saturday":
-            return "Sat"
-          case "sunday":
-            return "Sun"
-          default:
-            return day
-        }
-      })
-      .join(" ")
-  }
-
   return (
     <Box sx={{ display: "flex", gap: 2, width: "100%", p: 2 }}>
       {/* Left: course list */}
       <Paper variant="outlined" sx={{ width: { xs: "100%", md: 320 }, maxHeight: 640, overflow: "auto", p: 2 }}>
-        <Typography variant="h6" sx={{ mb: 1, pl: 1 }}>Courses</Typography>
-        <Divider />
+        <Stack direction={"row"} gap={2} sx={{ display: "flex", alignItems: "center", }}>
+          <Typography variant="h6" sx={{ pl: 1 }}>Courses</Typography>
+          <Button onClick={addCourse} variant="contained" color="secondary" sx={{ textTransform: "none", ml: "auto" }} >New Course</Button>
+        </Stack>
+        <Divider sx={{ mt: 2 }} />
         <List>
           {courses.map((c) => (
             <ListItemButton
@@ -92,8 +80,9 @@ export default function Courses() {
 
       {/* Right: details panel */}
       <Box sx={{ flex: 1 }}>
-        {/* Conditional Rendering */}
+        {/* Conditional Rendering based on if a course is selected or not*/}
         {!selected ? (
+          // CHANGE STYLING HERE
           <Paper variant="outlined" sx={{ p: 3 }}>
             <Typography variant="h6">Select a course</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
@@ -101,6 +90,7 @@ export default function Courses() {
             </Typography>
           </Paper>
         ) : (
+          // CHANGE STYLING HERE
           <Paper variant="outlined" sx={{ p: 3 }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between">
               <Box>
@@ -108,7 +98,7 @@ export default function Courses() {
                 <Typography variant="caption" color="text.secondary">{getDateAbbrev(selected.days)} • {to12Hour(selected.startTime)} - {to12Hour(selected.endTime)}</Typography>
               </Box>
               <Box>
-                <Button variant="outlined" color="inherit" sx={{ mr: 1 }} onClick={() => openEdit(selected)}>Edit</Button>
+                <Button variant="outlined" color="inherit" sx={{ mr: 1 }} onClick={() => editCourse(selected)}>Edit</Button>
                 <Button variant="contained" color="secondary">Add to calendar</Button>
               </Box>
             </Stack>
@@ -130,7 +120,7 @@ export default function Courses() {
           </Paper>
         )}
       </Box>
-      <AddCourseModal open={showAddCourseModal} close={closeModal} addNewCourse={addOrUpdateCourse} initialCourse={editingCourse} />
+      <AddCourseModal open={showAddCourseModal} close={closeModal} addNewCourse={addOrUpdateCourse} editingCourse={courseToEdit} />
     </Box>
   )
 }
