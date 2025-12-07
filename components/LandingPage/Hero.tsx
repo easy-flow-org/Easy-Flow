@@ -1,49 +1,69 @@
 "use client"
 
-import { Button, Container, Grid, Stack, styled, Typography } from "@mui/material";
+import { Button, Container, Stack, styled, Typography, Box } from "@mui/material";
+import Image from 'next/image'
 import HeroNav from "./HeroNav";
 import Link from "next/link";
-// Defining Custom Styled Components Here
-const StyledGrid = styled(Grid)(({ theme }) => ({
-  marginTop: "1rem",
-  padding: "7rem 1rem 7rem 1rem",
-  backgroundColor: "whitesmoke",
-  display: "flex",
-  alignContent: "center",
-  justifyContent: "center",
-}))
+import previewImg from "../../public/preview.png"
 
-const StyledTypography = styled(Typography)(({ theme }) => ({
-  textAlign: "center",
+const HeroContainer = styled(Container)(({ theme }) => ({
+  paddingTop: theme.spacing(8),
+  paddingBottom: theme.spacing(8),
 }))
-//
 
 export default function Hero() {
   return (
     <>
       <HeroNav />
 
-      <StyledGrid container>
-        <Stack direction={"column"} gap={"1rem"} sx={{ justifyContent: "center", alignItems: "center" }}>
-          <StyledTypography variant="h2">
-            EasyFlow
-          </StyledTypography>
-          <StyledTypography variant="h4">The All in One Productivity App For Students</StyledTypography>
-          <StyledTypography variant="subtitle1" sx={{ maxWidth: "700px" }}>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptas, aspernatur rerum. Ipsum sunt id voluptates expedita asperiores dolor corporis nemo hic deserunt neque, cumque, itaque fugit adipisci reprehenderit. Error, ea!</StyledTypography>
+      <HeroContainer maxWidth="lg">
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={4} alignItems="center">
+          <Box sx={{ flex: 1 }}>
+            <Stack spacing={2}>
+              <Typography variant="h3" component="h1" sx={{ fontWeight: 700 }}>
+                EasyFlow — organize classes, tasks, and focus time
+              </Typography>
+              <Typography variant="h6" color="text.secondary">
+                Built for students: add courses, track tasks, and launch focused sessions — all in one clean interface.
+              </Typography>
 
-          <Stack direction={"row"} gap={"1rem"} sx={{ justifyContent: "center", alignItems: "center", marginTop: "1.5rem", }}>
-            <Button variant="contained" color="secondary" sx={{ textTransform: "none" }}>Try EasyFlow for Free</Button>
-<Link href="/login" passHref>
-  <Button 
-    variant="outlined" 
-    color="inherit" 
-    sx={{ textTransform: "none" }}
-  >
-    Login
-  </Button>
-</Link>          </Stack>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mt: 2 }}>
+                <Button component={Link} href="/dashboard/courses" variant="contained" color="secondary" sx={{ textTransform: 'none' }}>
+                  View Courses
+                </Button>
+                <Button component={Link} href="/dashboard/tasks" variant="outlined" color="inherit" sx={{ textTransform: 'none' }}>
+                  View Tasks
+                </Button>
+                <Button component={Link} href="/dashboard/focus-mode" variant="text" color="secondary" sx={{ textTransform: 'none' }}>
+                  Try Focus Mode
+                </Button>
+              </Stack>
+            </Stack>
+          </Box>
+
+          <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Box
+              sx={{
+                bgcolor: 'whitesmoke',
+                borderRadius: 2,
+                width: '100%',
+                maxWidth: 760,
+                height: { xs: 220, md: 400 },
+                position: 'relative',
+                overflow: 'hidden',
+                boxShadow: 3,
+              }}
+            >
+              <Image
+                src={previewImg}
+                alt="App Preview"
+                fill
+                sizes="(max-width:600px) 100vw, (max-width:1200px) 50vw, 760px"
+              />
+            </Box>
+          </Box>
         </Stack>
-      </StyledGrid>
+      </HeroContainer>
     </>
   )
 }
