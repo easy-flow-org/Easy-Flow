@@ -1,4 +1,11 @@
-const dummyContent = {
+import { Course, Task } from "@/types/types"
+
+interface dummyContentTypes {
+  courses: Course[]
+  tasks: Task[]
+}
+
+const dummyContent: dummyContentTypes = {
     courses: [
     {
       id: crypto.randomUUID(),
@@ -49,9 +56,6 @@ const dummyContent = {
       dueDate: new Date("2025-12-04T23:59:00"),
       importance: "Hard" as const,
       completed: false,
-      onToggleComplete: (id: string) => console.log("toggle", id),
-      onEdit: (id: string) => console.log("edit", id),
-      onDelete: (id: string) => console.log("delete", id),
     },
     {
       id: crypto.randomUUID(),
@@ -60,9 +64,6 @@ const dummyContent = {
       dueDate: new Date("2025-12-06T17:00:00"),
       importance: "Medium" as const,
       completed: false,
-      onToggleComplete: (id: string) => console.log("toggle", id),
-      onEdit: (id: string) => console.log("edit", id),
-      onDelete: (id: string) => console.log("delete", id),
     },
     {
       id: crypto.randomUUID(),
@@ -71,9 +72,6 @@ const dummyContent = {
       dueDate: new Date("2025-12-02T12:00:00"),
       importance: "Easy" as const,
       completed: true,
-      onToggleComplete: (id: string) => console.log("toggle", id),
-      onEdit: (id: string) => console.log("edit", id),
-      onDelete: (id: string) => console.log("delete", id),
     },
     {
       id: crypto.randomUUID(),
@@ -82,9 +80,6 @@ const dummyContent = {
       dueDate: new Date("2025-12-08T09:00:00"),
       importance: "Medium" as const,
       completed: false,
-      onToggleComplete: (id: string) => console.log("toggle", id),
-      onEdit: (id: string) => console.log("edit", id),
-      onDelete: (id: string) => console.log("delete", id),
     },
     {
       id: crypto.randomUUID(),
@@ -93,9 +88,6 @@ const dummyContent = {
       dueDate: new Date("2025-12-03T20:00:00"),
       importance: "Easy" as const,
       completed: false,
-      onToggleComplete: (id: string) => console.log("toggle", id),
-      onEdit: (id: string) => console.log("edit", id),
-      onDelete: (id: string) => console.log("delete", id),
     }
   ]
 }

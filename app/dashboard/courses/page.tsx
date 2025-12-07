@@ -19,6 +19,11 @@ export default function Courses() {
 
   // Related to showing/hiding modal
   const [showAddCourseModal, setShowAddCourseModal] = useState(false)
+
+  const addCourse = () => {
+    setShowAddCourseModal(true)
+  }
+
   const closeModal = () => {
     setShowAddCourseModal(false)
     setTimeout(() => {
@@ -54,7 +59,7 @@ export default function Courses() {
       <Paper variant="outlined" sx={{ width: { xs: "100%", md: 320 }, maxHeight: 640, overflow: "auto", p: 2 }}>
         <Stack direction={"row"} gap={2} sx={{ display: "flex", alignItems: "center", }}>
           <Typography variant="h6" sx={{ pl: 1 }}>Courses</Typography>
-          <Button variant="contained" color="secondary" sx={{ textTransform: "none", ml: "auto" }} >New Course</Button>
+          <Button onClick={addCourse} variant="contained" color="secondary" sx={{ textTransform: "none", ml: "auto" }} >New Course</Button>
         </Stack>
         <Divider sx={{ mt: 2 }} />
         <List>
