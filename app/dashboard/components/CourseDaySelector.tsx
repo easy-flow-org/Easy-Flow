@@ -29,12 +29,8 @@ const weekDays = [
   "Sunday",
 ];
 
-type CourseDaySelectorProps = {
-  initialDays?: string; // comma separated, e.g. "Monday,Wednesday"
-}
-
-export default function CourseDaySelector({ initialDays }: CourseDaySelectorProps) {
-  const [totalDays, setTotalDays] = React.useState<string[]>(() => (initialDays ? initialDays.split(",").map(d => d.trim()) : []));
+export default function CourseDaySelector() {
+  const [totalDays, setTotalDays] = React.useState<string[]>([]);
 
   const handleChange = (event: SelectChangeEvent<typeof totalDays>) => {
     // Deconstructing
