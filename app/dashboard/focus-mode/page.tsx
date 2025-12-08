@@ -3,13 +3,13 @@
 
 import HeroNav from "@/components/LandingPage/HeroNav";
 import SideNav from "@/app/dashboard/components/SideNav";
-import { 
-  Box, 
-  Button, 
-  Card, 
-  CardContent, 
-  Container, 
-  Typography, 
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Typography,
   LinearProgress,
   Stack,
   IconButton,
@@ -29,7 +29,7 @@ const TIMER_SETTINGS = {
   longBreak: 15 * 60, // 15 minutes
 };
 
-export default function PomodoroPage(){
+export default function PomodoroPage() {
   const [mode, setMode] = useState<TimerMode>('work');
   const [timeLeft, setTimeLeft] = useState(TIMER_SETTINGS.work);
   const [isRunning, setIsRunning] = useState(false);
@@ -102,56 +102,79 @@ export default function PomodoroPage(){
 
   return (
     <>
-      <SideNav />
-      
       <Container maxWidth="md" sx={{ mt: 8, mb: 8 }}>
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
             Pomodoro Timer
           </Typography>
-          
+
           <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 4 }}>
             Stay focused and productive with the Pomodoro Technique
           </Typography>
 
           <Card elevation={3} sx={{ borderRadius: 3, overflow: 'visible' }}>
             <CardContent sx={{ p: 4 }}>
-              {/* Mode Selection */}
-              <Stack direction="row" spacing={2} justifyContent="center" sx={{ mb: 4 }}>
-                <Chip 
-                  label="Work" 
+              {/* Mode Selection - responsive: column on xs, row on sm+; non-selected chips get a subtle filled background so they don't appear empty */}
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                spacing={{ xs: 1, sm: 0 }}
+                justifyContent="center"
+                alignItems="center"
+                sx={{ mb: 4, gap: { xs: 1, sm: 0 } }}
+              >
+                <Chip
+                  label="Work"
                   onClick={() => switchMode('work')}
                   color={mode === 'work' ? 'primary' : 'default'}
                   variant={mode === 'work' ? 'filled' : 'outlined'}
-                  sx={{ px: 2, fontSize: '1rem' }}
+                  sx={{
+                    px: 2,
+                    fontSize: '1rem',
+                    width: { xs: '100%', sm: 'auto' },
+                    textAlign: 'center',
+                    // subtle filled look when not selected
+                    backgroundColor: mode === 'work' ? undefined : (theme) => theme.palette.action.hover,
+                  }}
                 />
-                <Chip 
-                  label="Short Break" 
+                <Chip
+                  label="Short Break"
                   onClick={() => switchMode('shortBreak')}
                   color={mode === 'shortBreak' ? 'secondary' : 'default'}
                   variant={mode === 'shortBreak' ? 'filled' : 'outlined'}
-                  sx={{ px: 2, fontSize: '1rem' }}
+                  sx={{
+                    px: 2,
+                    fontSize: '1rem',
+                    width: { xs: '100%', sm: 'auto' },
+                    textAlign: 'center',
+                    backgroundColor: mode === 'shortBreak' ? undefined : (theme) => theme.palette.action.hover,
+                  }}
                 />
-                <Chip 
-                  label="Long Break" 
+                <Chip
+                  label="Long Break"
                   onClick={() => switchMode('longBreak')}
                   color={mode === 'longBreak' ? 'success' : 'default'}
                   variant={mode === 'longBreak' ? 'filled' : 'outlined'}
-                  sx={{ px: 2, fontSize: '1rem' }}
+                  sx={{
+                    px: 2,
+                    fontSize: '1rem',
+                    width: { xs: '100%', sm: 'auto' },
+                    textAlign: 'center',
+                    backgroundColor: mode === 'longBreak' ? undefined : (theme) => theme.palette.action.hover,
+                  }}
                 />
               </Stack>
 
               {/* Timer Display */}
               <Box sx={{ mb: 3 }}>
-                <Typography 
-                  variant="h1" 
-                  component="div" 
-                  sx={{ 
+                <Typography
+                  variant="h1"
+                  component="div"
+                  sx={{
                     fontSize: { xs: '4rem', sm: '6rem', md: '8rem' },
                     fontWeight: 'bold',
                     fontFamily: 'monospace',
-                    color: mode === 'work' ? '#1976d2' : 
-                           mode === 'shortBreak' ? '#9c27b0' : '#2e7d32'
+                    color: mode === 'work' ? '#1976d2' :
+                      mode === 'shortBreak' ? '#9c27b0' : '#2e7d32'
                   }}
                 >
                   {formatTime(timeLeft)}
@@ -159,25 +182,25 @@ export default function PomodoroPage(){
               </Box>
 
               {/* Progress Bar */}
-              <LinearProgress 
-                variant="determinate" 
-                value={progress} 
-                sx={{ 
-                  height: 10, 
-                  borderRadius: 5, 
+              <LinearProgress
+                variant="determinate"
+                value={progress}
+                sx={{
+                  height: 10,
+                  borderRadius: 5,
                   mb: 4,
                   backgroundColor: 'grey.200'
                 }}
-                color={mode === 'work' ? 'primary' : 
-                       mode === 'shortBreak' ? 'secondary' : 'success'}
+                color={mode === 'work' ? 'primary' :
+                  mode === 'shortBreak' ? 'secondary' : 'success'}
               />
 
               {/* Control Buttons */}
               <Stack direction="row" spacing={2} justifyContent="center" sx={{ mb: 3 }}>
-                <IconButton 
+                <IconButton
                   onClick={toggleTimer}
-                  sx={{ 
-                    width: 64, 
+                  sx={{
+                    width: 64,
                     height: 64,
                     backgroundColor: '#1976d2',
                     color: 'white',
@@ -188,11 +211,11 @@ export default function PomodoroPage(){
                 >
                   {isRunning ? <PauseIcon fontSize="large" /> : <PlayArrowIcon fontSize="large" />}
                 </IconButton>
-                
-                <IconButton 
+
+                <IconButton
                   onClick={resetTimer}
-                  sx={{ 
-                    width: 64, 
+                  sx={{
+                    width: 64,
                     height: 64,
                     backgroundColor: '#f50057',
                     color: 'white',
@@ -204,10 +227,10 @@ export default function PomodoroPage(){
                   <RestartAltIcon fontSize="large" />
                 </IconButton>
 
-                <IconButton 
+                <IconButton
                   onClick={skipToNext}
-                  sx={{ 
-                    width: 64, 
+                  sx={{
+                    width: 64,
                     height: 64,
                     backgroundColor: '#0288d1',
                     color: 'white',
