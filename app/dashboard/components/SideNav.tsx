@@ -12,7 +12,7 @@ const navItems = [
   { label: 'Courses', href: '/dashboard/courses', icon: 'AutoStories' },
   { label: 'Tasks', href: '/dashboard/tasks', icon: 'FolderSpecial' },
   { label: 'Calendar', href: '/dashboard/calendar', icon: 'CalendarMonth' },
-  { label: 'Focus Mode', href: '/dashboard/pomodoro', icon: 'OfflineBolt' },
+  { label: 'Focus Mode', href: '/dashboard/focus-mode', icon: 'OfflineBolt' },
 ];
 
 export default function SideNav() {

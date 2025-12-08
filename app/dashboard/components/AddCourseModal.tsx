@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useRef } from "react"
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, TextFieldProps } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, TextFieldProps } from "@mui/material";
 import CourseDaySelector from "./CourseDaySelector";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -11,18 +11,18 @@ type ModalProps = {
   open: boolean
   close: () => void
   addNewCourse: (newCourse: Course) => void
-  initialCourse?: Course | null
+  editingCourse?: Course | null
 }
 
 export default function AddCourseModal(props: ModalProps) {
 
-  // This is for when the user submits the form
+  // User submit
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const form = event.currentTarget
     const data = new FormData(form)
     const newCourse: Course = {
-      id: props.initialCourse?.id ?? crypto.randomUUID(),
+      id: props.editingCourse?.id ?? crypto.randomUUID(),
       title: data.get('courseTitle') as string,
       description: data.get('courseDescription') as string,
       days: data.get('courseDays') as string,
@@ -34,7 +34,7 @@ export default function AddCourseModal(props: ModalProps) {
 
     // add course BACKEND SIDE
 
-    
+
     props.close()
   }
   //
@@ -62,7 +62,7 @@ export default function AddCourseModal(props: ModalProps) {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Dialog open={props.open} onClose={props.close}>
-        <DialogTitle>{props.initialCourse ? "Edit Course" : "Add New Course"}</DialogTitle>
+        <DialogTitle>{props.editingCourse ? "Edit Course" : "Add New Course"}</DialogTitle>
         <DialogContent sx={{ width: "100%", maxWidth: "400px" }}>
           {/* This is the actual modal form */}
           <form onSubmit={handleSubmit} action="#" id="add-course-form">
@@ -74,18 +74,18 @@ export default function AddCourseModal(props: ModalProps) {
               label="Course Title"
               type="text"
               required
-              defaultValue={props.initialCourse?.title ?? ''}
+              defaultValue={props.editingCourse?.title ?? ''}
               {...sharedProps}
               sx={{ width: "100%", maxWidth: "320px" }}
             />
-            <CourseDaySelector initialDays={props.initialCourse?.days} />
+            <CourseDaySelector initialDays={props.editingCourse?.days} />
             <TextField
               id="course-start-time"
               name="startTime"
               label="Start Time"
               type="time"
               required
-              defaultValue={props.initialCourse?.startTime ?? ''}
+              defaultValue={props.editingCourse?.startTime ?? ''}
               {...sharedProps}
             />
             <TextField
@@ -94,16 +94,16 @@ export default function AddCourseModal(props: ModalProps) {
               label="End Time"
               type="time"
               required
-              defaultValue={props.initialCourse?.endTime ?? ''}
+              defaultValue={props.editingCourse?.endTime ?? ''}
               {...sharedProps}
-              sx={{ ml: 2 }}
+              sx={{ mt: { xs: 1 } }}
             />
             <TextField
               id="course-description"
               name="courseDescription"
               label="Course Description"
               type="text"
-              defaultValue={props.initialCourse?.description ?? ''}
+              defaultValue={props.editingCourse?.description ?? ''}
               {...sharedProps}
               multiline
               rows={4}
