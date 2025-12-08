@@ -12,6 +12,8 @@ export interface Task {
   title: string;
   notes: string;
   dueDate: Date;
+  // dueTime stores the time portion as HH:MM (24-hour) for easier display and editing
+  dueTime?: string;
   importance: "Easy" | "Medium" | "Hard";
   completed: boolean;
 };
