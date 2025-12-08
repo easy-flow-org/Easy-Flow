@@ -102,7 +102,6 @@ export default function PomodoroPage(){
 
   return (
     <>
-      <SideNav />
       
       <Container maxWidth="md" sx={{ mt: 8, mb: 8 }}>
         <Box sx={{ textAlign: 'center' }}>
