@@ -16,9 +16,19 @@ import { Task } from "@/types/types"
 import AddTaskModal from "../components/AddTaskModal"
 import dummyContent from "@/lib/dummyContent"
 
-function formatDueDate(d?: Date | string) {
-  if (!d) return "No due date"
-  const date = d instanceof Date ? d : new Date(d as any)
+function formatDueDate(d?: Date | string, time?: string) {
+  if (!d && !time) return "No due date"
+  let date: Date | null = null
+  if (d) date = d instanceof Date ? d : new Date(d as any)
+  if (time) {
+    // Build a local YYYY-MM-DD from the date (or today) using local parts
+    const pad = (n: number) => String(n).padStart(2, '0')
+    const dateStr = date
+      ? `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+      : new Date().toISOString().slice(0, 10)
+    date = new Date(`${dateStr}T${time}`)
+  }
+  if (!date) return "No due date"
   return date.toLocaleString(undefined, {
     month: "short",
     day: "numeric",
@@ -92,7 +102,7 @@ export default function TasksPage() {
               <Box sx={{ minWidth: 0 }}>
                 <Typography variant="subtitle1" sx={{ textDecoration: task.completed ? "line-through" : "none" }}>{task.title}</Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: .5 }}>{task.notes || "No notes"}</Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ mt: .5 }}>Due: {formatDueDate(task.dueDate)}</Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ mt: .5 }}>Due: {formatDueDate(task.dueDate, task.dueTime)}</Typography>
               </Box>
             </Box>
 
