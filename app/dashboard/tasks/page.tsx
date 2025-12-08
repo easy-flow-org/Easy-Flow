@@ -98,7 +98,7 @@ export default function TasksPage() {
         {tasks.map((task) => (
           <Paper key={task.id} variant="outlined" sx={{ p: 2, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start", minWidth: 0 }}>
-              <Checkbox color="secondary" checked={task.completed} onChange={() => toggleComplete(task.id)} />
+              <Checkbox color="secondary" checked={task.completed} onChange={() => toggleComplete(task.id)} size="large" />
               <Box sx={{ minWidth: 0 }}>
                 <Typography variant="subtitle1" sx={{ textDecoration: task.completed ? "line-through" : "none" }}>{task.title}</Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: .5 }}>{task.notes || "No notes"}</Typography>

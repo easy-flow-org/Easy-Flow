@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useRef } from "react"
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, TextFieldProps } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, TextFieldProps } from "@mui/material";
 import CourseDaySelector from "./CourseDaySelector";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -34,7 +34,7 @@ export default function AddCourseModal(props: ModalProps) {
 
     // add course BACKEND SIDE
 
-    
+
     props.close()
   }
   //
@@ -96,7 +96,7 @@ export default function AddCourseModal(props: ModalProps) {
               required
               defaultValue={props.editingCourse?.endTime ?? ''}
               {...sharedProps}
-              sx={{ ml: 2 }}
+              sx={{ mt: { xs: 1 } }}
             />
             <TextField
               id="course-description"
