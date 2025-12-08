@@ -53,106 +53,95 @@ export default function Dashboard() {
   //
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', minHeight: '100vh', p: 2, backgroundColor: (t) => t.palette.background.default }}>
-      <Box sx={{ minWidth: 800, width: '100%', maxWidth: 1200 }}>
-        <Box
-          sx={{
-            display: 'grid',
-            gap: 2,
-            gridTemplateColumns: { xs: '1fr', md: '240px 1fr 240px' },
-            alignItems: 'start',
-          }}
-        >
+    <Box sx={{ display: 'flex', alignItems: 'center', width: "100%", minHeight: '100vh', p: 2, backgroundColor: (t) => t.palette.background.default }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gap: 2,
+          gridTemplateColumns: { xs: '1fr', md: '240px 1fr 240px' },
+          alignItems: 'start',
+        }}
+      >
 
-          {/* Left: Courses list */}
-          <Paper variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, borderColor: (t) => t.palette.divider }}>
-            <Link href="dashboard/courses" style={{ textDecoration: "none" }}>
-              <Tooltip title="See all Courses"><Typography variant="h6" mb={1} fontWeight={700} sx={{ color: theme.palette.text.primary, width: "fit-content" }}>Courses</Typography></Tooltip>
+        {/* Left: Courses list */}
+        <Paper variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, borderColor: (t) => t.palette.divider }}>
+          <Link href="dashboard/courses" style={{ textDecoration: "none" }}>
+            <Tooltip title="See all Courses"><Typography variant="h6" mb={1} fontWeight={700} sx={{ color: theme.palette.text.primary, width: "fit-content" }}>Courses</Typography></Tooltip>
+          </Link>
+          <Stack gap={1} overflow={"auto"} height={511}>
+            {courses.map((c) => (
+              <CourseCard course={c} key={c.id} />
+            ))}
+          </Stack>
+        </Paper>
+
+        {/* Middle: Main panel (FocusChart + actions) */}
+        <Card variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, height: "100%" }}>
+          <Stack direction={"row"} gap={{xs: 0, sm: 2}} sx={{ alignItems: "center" }}>
+            <Box>
+              <Typography variant="h6" fontWeight={700}>Overview</Typography>
+              <Typography variant="body2" color="text.secondary">Snapshot of your focus and upcoming items</Typography>
+            </Box>
+            <Box>
+              <Link href="/dashboard/pomodoro" style={{ textDecoration: 'none' }}>
+                <Button variant="contained" color="secondary" sx={{ textTransform: 'none', fontSize: {xs: 12, }, ml: "auto" }}>Start Focus Mode</Button>
+              </Link>
+            </Box>
+          </Stack>
+          <Divider sx={{ mt: { xs: 2, md: 5 }, mb: { xs: 2, md: 5 } }} />
+          <FocusChart />
+        </Card>
+
+        {/* Right: Upcoming & quick actions */}
+        <Stack spacing={2}>
+          <Paper variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, }}>
+            <Link href={"dashboard/tasks"} style={{ textDecoration: "none" }} >
+              <Tooltip title="See all tasks" placement="bottom-start">
+                <Typography variant="h6" fontWeight={700} sx={{ color: theme.palette.text.primary, mb: 1 }}>Upcoming Tasks</Typography>
+              </Tooltip>
             </Link>
-            <Stack gap={1} overflow={"auto"} height={511}>
-              {courses.map((c) => (
-                <CourseCard course={c} key={c.id} />
+            <Stack spacing={1}>
+              {/* Task Cards */}
+              {tasks.slice(0, 3).map((task) => (
+                <Paper key={task.id} variant="outlined" sx={{ p: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight={600}>{task.title}</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {(() => {
+                        const d = task.dueDate instanceof Date ? task.dueDate : new Date(task.dueDate as any)
+                        return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+                      })()}
+                    </Typography>
+                  </Box>
+                  <Chip label={task.importance} size="small" color={task.importance === 'Hard' ? 'error' : task.importance === 'Medium' ? 'warning' : 'default'} />
+                </Paper>
               ))}
             </Stack>
           </Paper>
-
-          {/* Middle: Main panel (FocusChart + actions) */}
-          <Card variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, height: "100%" }}>
-            <Stack direction={"row"} gap={2} sx={{ alignItems: "center" }}>
-              <Box>
-                <Typography variant="h6" fontWeight={700}>Overview</Typography>
-                <Typography variant="body2" color="text.secondary">Snapshot of your focus and upcoming items</Typography>
-              </Box>
-              <Box>
-                <Link href="/dashboard/focus-mode" style={{ textDecoration: 'none' }}>
-                  <Button variant="contained" color="secondary" sx={{ textTransform: 'none' }}>Start Focus Mode</Button>
-                </Link>
-              </Box>
+          <Paper variant="outlined" sx={{ p: 1.5, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1 }}>
+            <Typography variant="h6" fontWeight={700} mb={1} sx={{ color: theme.palette.text.primary }}>Quick Actions</Typography>
+            <Stack direction="column" spacing={1}>
+              <Button
+                variant="contained"
+                color="secondary"
+                fullWidth
+                sx={{ textTransform: 'none' }}
+                onClick={handleAddTaskOpen}
+              >
+                New Task
+              </Button>
+              <Button
+                variant="contained"
+                fullWidth
+                color="secondary"
+                sx={{ textTransform: 'none' }}
+                onClick={handleAddCourseOpen}
+              >
+                New Course
+              </Button>
             </Stack>
-            <Divider sx={{ mt: 5, mb: 5 }} />
-            <FocusChart />
-          </Card>
-
-          {/* Right: Upcoming & quick actions */}
-          <Stack spacing={2}>
-            <Paper variant="outlined" sx={{ p: 2, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1, }}>
-              <Link href={"dashboard/tasks"} style={{ textDecoration: "none" }} >
-                <Tooltip title="See all tasks" placement="bottom-start">
-                  <Typography variant="h6" fontWeight={700} sx={{ color: theme.palette.text.primary, mb: 1 }}>Upcoming Tasks</Typography>
-                </Tooltip>
-              </Link>
-              <Stack spacing={1}>
-                {/* Task Cards */}
-                {tasks.slice(0, 3).map((task) => (
-                  <Paper key={task.id} variant="outlined" sx={{ p: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Box>
-                      <Typography variant="subtitle1" fontWeight={600}>{task.title}</Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {(() => {
-                          const d = task.dueDate instanceof Date ? task.dueDate : new Date(task.dueDate as any)
-                          return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
-                        })()}
-                      </Typography>
-                    </Box>
-                    <Chip label={task.importance} size="small" color={task.importance === 'Hard' ? 'error' : task.importance === 'Medium' ? 'warning' : 'default'} />
-                  </Paper>
-                ))}
-              </Stack>
-            </Paper>
-            <Paper variant="outlined" sx={{ p: 1.5, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1 }}>
-              <Typography variant="h6" fontWeight={700} mb={1} sx={{ color: theme.palette.text.primary }}>Quick Actions</Typography>
-              <Stack direction="column" spacing={1}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  fullWidth
-                  sx={{ textTransform: 'none' }}
-                  onClick={handleAddTaskOpen}
-                >
-                  New Task
-                </Button>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  color="secondary"
-                  sx={{ textTransform: 'none' }}
-                  onClick={handleAddCourseOpen}
-                >
-                  New Course
-                </Button>
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  color="inherit"
-                  sx={{ textTransform: 'none' }}
-                  onClick={() => alert('Edit — not implemented')}
-                >
-                  Edit
-                </Button>
-              </Stack>
-            </Paper>
-          </Stack>
-        </Box>
+          </Paper>
+        </Stack>
       </Box>
       <AddCourseModal open={showAddCourseModal} close={handleAddCourseClose} addNewCourse={addNewCourse}></AddCourseModal>
       <AddTaskModal open={showAddTaskModal} close={handleAddTaskClose} addNewTask={addNewTask}></AddTaskModal>

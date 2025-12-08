@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Box, Paper, List, ListItemButton, ListItemText, Typography, Divider, Stack, Button } from "@mui/material"
+import { Box, Paper, List, ListItemButton, ListItemText, Typography, Divider, Stack, Button, useMediaQuery } from "@mui/material"
 import dummyContent from "@/lib/dummyContent"
 import { Course } from "@/types/types"
 import to12Hour from "@/lib/to12Hour"
@@ -9,6 +9,8 @@ import AddCourseModal from "../components/AddCourseModal"
 import getDateAbbrev from "@/lib/getDateAbbrev"
 
 export default function Courses() {
+  const isMobile = useMediaQuery("(max-width:600px)")
+
   // Load dummy course data
   const [courses, setCourses] = useState<Course[]>([...dummyContent.courses])
   //
@@ -54,7 +56,7 @@ export default function Courses() {
   }
 
   return (
-    <Box sx={{ display: "flex", gap: 2, width: "100%", p: 2 }}>
+    <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, width: "100%", p: 2 }}>
       {/* Left: course list */}
       <Paper variant="outlined" sx={{ width: { xs: "100%", md: 320 }, maxHeight: 640, overflow: "auto", p: 2 }}>
         <Stack direction={"row"} gap={2} sx={{ display: "flex", alignItems: "center", }}>
@@ -86,7 +88,7 @@ export default function Courses() {
           <Paper variant="outlined" sx={{ p: 3 }}>
             <Typography variant="h6">Select a course</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              Click any course on the left to view details.
+              Click any course on {isMobile ? " top" : "the left"} to view details.
             </Typography>
           </Paper>
         ) : (
@@ -97,10 +99,10 @@ export default function Courses() {
                 <Typography variant="h5" fontWeight={700}>{selected.title}</Typography>
                 <Typography variant="caption" color="text.secondary">{getDateAbbrev(selected.days)} • {to12Hour(selected.startTime)} - {to12Hour(selected.endTime)}</Typography>
               </Box>
-              <Box>
-                <Button variant="outlined" color="inherit" sx={{ mr: 1 }} onClick={() => editCourse(selected)}>Edit</Button>
-                <Button variant="contained" color="secondary">Add to calendar</Button>
-              </Box>
+              <Stack direction={{ xs: "column", sm: "row" }} gap={{ xs: 1, sm: 2 }} ml={2}>
+                <Button variant="outlined" color="inherit" sx={{ textTransform: "none" }} onClick={() => editCourse(selected)}>Edit</Button>
+                <Button variant="contained" color="secondary" sx={{ textTransform: "none" }}>Add to calendar</Button>
+              </Stack>
             </Stack>
 
             <Divider sx={{ my: 2 }} />
