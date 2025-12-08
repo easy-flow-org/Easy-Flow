@@ -1,22 +1,45 @@
 "use client"
 
-import React, { useState } from "react"
-import { Box, Paper, List, ListItemButton, ListItemText, Typography, Divider, Stack, Button } from "@mui/material"
-import dummyContent from "@/lib/dummyContent"
+import React, { useState, useEffect } from "react"
+import { Box, Paper, List, ListItemButton, ListItemText, Typography, Divider, Stack, Button, CircularProgress } from "@mui/material"
 import { Course } from "@/types/types"
 import to12Hour from "@/lib/to12Hour"
 import AddCourseModal from "../components/AddCourseModal"
+import { useAuth } from "@/app/context/authContext"
+import { getCourses, addCourse, updateCourse, deleteCourse } from "@/lib/firebase/courses"
 
 export default function Courses() {
+  const { user } = useAuth()
   // Selected is a Course Type, or null
   const [selected, setSelected] = useState<Course | null>(null)
 
   // Related to edit course modal
   // Manage courses locally so we can edit
-  const [courses, setCourses] = useState<Course[]>([...dummyContent.courses])
+  const [courses, setCourses] = useState<Course[]>([])
+  const [loading, setLoading] = useState(true)
 
   const [showAddCourseModal, setShowAddCourseModal] = useState(false)
   const [editingCourse, setEditingCourse] = useState<Course | null>(null)
+
+  // Load courses from Firebase
+  useEffect(() => {
+    if (user) {
+      loadCourses()
+    }
+  }, [user])
+
+  const loadCourses = async () => {
+    if (!user) return
+    try {
+      setLoading(true)
+      const fetchedCourses = await getCourses(user.uid)
+      setCourses(fetchedCourses)
+    } catch (error) {
+      console.error("Error loading courses:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const openEdit = (course: Course) => {
     setEditingCourse(course)
@@ -28,17 +51,40 @@ export default function Courses() {
     setShowAddCourseModal(false)
   }
 
-  const addOrUpdateCourse = (newCourse: Course) => {
-    setCourses((prev) => {
-      const exists = prev.find((c) => c.id === newCourse.id)
-      if (exists) {
-        return prev.map((c) => (c.id === newCourse.id ? newCourse : c))
+  const addOrUpdateCourse = async (newCourse: Course) => {
+    if (!user) return
+    try {
+      const isUpdate = courses.some((c) => c.id === newCourse.id)
+      if (isUpdate) {
+        await updateCourse(newCourse, user.uid)
+      } else {
+        const newId = await addCourse(newCourse, user.uid)
+        newCourse.id = newId
       }
-      return [...prev, newCourse]
-    })
-    // if we updated the selected course, reflect it
-    setSelected((s) => (s?.id === newCourse.id ? newCourse : s))
-    closeModal()
+      // Reload courses to get the latest data
+      await loadCourses()
+      // if we updated the selected course, reflect it
+      setSelected((s) => (s?.id === newCourse.id ? newCourse : s))
+      closeModal()
+    } catch (error) {
+      console.error("Error saving course:", error)
+      alert("Failed to save course. Please try again.")
+    }
+  }
+
+  const handleDeleteCourse = async (courseId: string) => {
+    if (!user) return
+    if (!confirm("Are you sure you want to delete this course?")) return
+    try {
+      await deleteCourse(courseId)
+      await loadCourses()
+      if (selected?.id === courseId) {
+        setSelected(null)
+      }
+    } catch (error) {
+      console.error("Error deleting course:", error)
+      alert("Failed to delete course. Please try again.")
+    }
   }
 
   function getDateAbbrev(days: string) {
@@ -68,26 +114,48 @@ export default function Courses() {
       .join(" ")
   }
 
+  if (loading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "400px" }}>
+        <CircularProgress />
+      </Box>
+    )
+  }
+
+  if (!user) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Typography>Please log in to view your courses.</Typography>
+      </Box>
+    )
+  }
+
   return (
     <Box sx={{ display: "flex", gap: 2, width: "100%", p: 2 }}>
       {/* Left: course list */}
       <Paper variant="outlined" sx={{ width: { xs: "100%", md: 320 }, maxHeight: 640, overflow: "auto", p: 2 }}>
         <Typography variant="h6" sx={{ mb: 1, pl: 1 }}>Courses</Typography>
         <Divider />
-        <List>
-          {courses.map((c) => (
-            <ListItemButton
-              key={c.id}
-              selected={selected?.id === c.id}
-              onClick={() => setSelected(c)}
-            >
-              <ListItemText
-                primary={c.title}
-                secondary={`${c.days.split(",").join(" ")} • ${to12Hour(c.startTime)}`}
-              />
-            </ListItemButton>
-          ))}
-        </List>
+        {courses.length === 0 ? (
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 2, pl: 1 }}>
+            No courses yet. Add your first course!
+          </Typography>
+        ) : (
+          <List>
+            {courses.map((c) => (
+              <ListItemButton
+                key={c.id}
+                selected={selected?.id === c.id}
+                onClick={() => setSelected(c)}
+              >
+                <ListItemText
+                  primary={c.title}
+                  secondary={`${c.days.split(",").join(" ")} • ${to12Hour(c.startTime)}`}
+                />
+              </ListItemButton>
+            ))}
+          </List>
+        )}
       </Paper>
 
       {/* Right: details panel */}
@@ -109,6 +177,7 @@ export default function Courses() {
               </Box>
               <Box>
                 <Button variant="outlined" color="inherit" sx={{ mr: 1 }} onClick={() => openEdit(selected)}>Edit</Button>
+                <Button variant="outlined" color="error" sx={{ mr: 1 }} onClick={() => handleDeleteCourse(selected.id)}>Delete</Button>
                 <Button variant="contained" color="secondary">Add to calendar</Button>
               </Box>
             </Stack>

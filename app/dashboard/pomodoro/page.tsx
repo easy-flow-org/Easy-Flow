@@ -20,6 +20,8 @@ import PauseIcon from '@mui/icons-material/Pause';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
 import { useState, useEffect, useRef } from "react";
+import { useAuth } from "@/app/context/authContext";
+import { recordPomodoroSession, getCompletedPomodoros } from "@/lib/firebase/pomodoro";
 
 type TimerMode = 'work' | 'shortBreak' | 'longBreak';
 
@@ -30,14 +32,36 @@ const TIMER_SETTINGS = {
 };
 
 export default function PomodoroPage(){
+  const { user } = useAuth();
   const [mode, setMode] = useState<TimerMode>('work');
   const [timeLeft, setTimeLeft] = useState(TIMER_SETTINGS.work);
   const [isRunning, setIsRunning] = useState(false);
   const [pomodorosCompleted, setPomodorosCompleted] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);  // Store the interval ID so we can stop the timer later
+  const sessionStartTime = useRef<number | null>(null); // Track when the current session started
+
+  // Load completed pomodoros count from Firebase
+  useEffect(() => {
+    if (user) {
+      loadCompletedPomodoros();
+    }
+  }, [user]);
+
+  const loadCompletedPomodoros = async () => {
+    if (!user) return;
+    try {
+      const count = await getCompletedPomodoros(user.uid);
+      setPomodorosCompleted(count);
+    } catch (error) {
+      console.error("Error loading completed pomodoros:", error);
+    }
+  };
 
   useEffect(() => {
     if (isRunning && timeLeft > 0) {
+      if (sessionStartTime.current === null) {
+        sessionStartTime.current = Date.now();
+      }
       intervalRef.current = setInterval(() => { //Store the interval id
         setTimeLeft((prev) => prev - 1);
       }, 1000);
@@ -50,10 +74,24 @@ export default function PomodoroPage(){
     };
   }, [isRunning, timeLeft]);
 
-  const handleTimerComplete = () => {
+  const handleTimerComplete = async () => {
     setIsRunning(false);
+    
+    // Record the completed session in Firebase
+    if (user && sessionStartTime.current !== null) {
+      const duration = Math.floor((Date.now() - sessionStartTime.current) / 1000);
+      try {
+        await recordPomodoroSession(user.uid, mode, duration, true);
+        if (mode === 'work') {
+          await loadCompletedPomodoros(); // Reload count from Firebase
+        }
+      } catch (error) {
+        console.error("Error recording pomodoro session:", error);
+      }
+    }
+    sessionStartTime.current = null;
+
     if (mode === 'work') {
-      setPomodorosCompleted((prev) => prev + 1);
       // Auto-switch to break after work session
       const nextMode = (pomodorosCompleted + 1) % 4 === 0 ? 'longBreak' : 'shortBreak';
       setMode(nextMode);
@@ -67,21 +105,38 @@ export default function PomodoroPage(){
 
   const toggleTimer = () => {
     setIsRunning(!isRunning);
+    if (!isRunning) {
+      sessionStartTime.current = Date.now();
+    }
   };
 
   const resetTimer = () => {
     setIsRunning(false);
     setTimeLeft(TIMER_SETTINGS[mode]);
+    sessionStartTime.current = null;
   };
 
   const switchMode = (newMode: TimerMode) => {
     setIsRunning(false);
     setMode(newMode);
     setTimeLeft(TIMER_SETTINGS[newMode]);
+    sessionStartTime.current = null;
   };
 
-  const skipToNext = () => {
+  const skipToNext = async () => {
     setIsRunning(false);
+    
+    // Record the incomplete session if it was running
+    if (user && sessionStartTime.current !== null) {
+      const duration = Math.floor((Date.now() - sessionStartTime.current) / 1000);
+      try {
+        await recordPomodoroSession(user.uid, mode, duration, false);
+      } catch (error) {
+        console.error("Error recording pomodoro session:", error);
+      }
+    }
+    sessionStartTime.current = null;
+
     if (mode === 'work') {
       const nextMode = pomodorosCompleted % 4 === 3 ? 'longBreak' : 'shortBreak';
       setMode(nextMode);

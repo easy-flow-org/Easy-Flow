@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useState } from "react"
+import { useState, useEffect } from "react"
 import {
   Box,
   Paper,
@@ -10,11 +10,13 @@ import {
   Chip,
   IconButton,
   Checkbox,
+  CircularProgress,
 } from "@mui/material"
 import { Edit, Delete } from "@mui/icons-material"
 import { Task } from "@/types/types"
 import AddTaskModal from "../components/AddTaskModal"
-import dummyContent from "@/lib/dummyContent"
+import { useAuth } from "@/app/context/authContext"
+import { getTasks, addTask, updateTask, deleteTask, toggleTaskComplete } from "@/lib/firebase/tasks"
 
 function formatDueDate(d?: Date | string) {
   if (!d) return "No due date"
@@ -28,12 +30,34 @@ function formatDueDate(d?: Date | string) {
 }
 
 export default function TasksPage() {
+  const { user } = useAuth()
   // local tasks state (single source for this page)
-  const [tasks, setTasks] = useState<Task[]>([...(dummyContent.tasks ?? [])])
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [loading, setLoading] = useState(true)
 
   // modal state
   const [showModal, setShowModal] = useState(false)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
+
+  // Load tasks from Firebase
+  useEffect(() => {
+    if (user) {
+      loadTasks()
+    }
+  }, [user])
+
+  const loadTasks = async () => {
+    if (!user) return
+    try {
+      setLoading(true)
+      const fetchedTasks = await getTasks(user.uid)
+      setTasks(fetchedTasks)
+    } catch (error) {
+      console.error("Error loading tasks:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const openNew = () => {
     setEditingTask(null)
@@ -50,20 +74,49 @@ export default function TasksPage() {
     setShowModal(false)
   }
 
-  const addOrUpdateTask = (task: Task) => {
-    setTasks((prev) => {
-      const exists = prev.find((p) => p.id === task.id)
-      if (exists) return prev.map((p) => (p.id === task.id ? task : p))
-      return [task, ...prev]
-    })
+  const addOrUpdateTask = async (task: Task) => {
+    if (!user) return
+    try {
+      const isUpdate = tasks.some((t) => t.id === task.id)
+      if (isUpdate) {
+        await updateTask(task, user.uid)
+      } else {
+        const newId = await addTask(task, user.uid)
+        task.id = newId
+      }
+      // Reload tasks to get the latest data
+      await loadTasks()
+      closeModal()
+    } catch (error) {
+      console.error("Error saving task:", error)
+      alert("Failed to save task. Please try again.")
+    }
   }
 
-  const toggleComplete = (id: string) => {
-    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)))
+  const toggleComplete = async (id: string) => {
+    if (!user) return
+    try {
+      const task = tasks.find((t) => t.id === id)
+      if (task) {
+        await toggleTaskComplete(id, !task.completed)
+        await loadTasks()
+      }
+    } catch (error) {
+      console.error("Error toggling task completion:", error)
+      alert("Failed to update task. Please try again.")
+    }
   }
 
-  const removeTask = (id: string) => {
-    setTasks((prev) => prev.filter((t) => t.id !== id))
+  const removeTask = async (id: string) => {
+    if (!user) return
+    if (!confirm("Are you sure you want to delete this task?")) return
+    try {
+      await deleteTask(id)
+      await loadTasks()
+    } catch (error) {
+      console.error("Error deleting task:", error)
+      alert("Failed to delete task. Please try again.")
+    }
   }
 
   const importanceColor = (importance: Task["importance"]) => {
@@ -77,6 +130,22 @@ export default function TasksPage() {
     }
   }
 
+  if (loading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "400px" }}>
+        <CircularProgress />
+      </Box>
+    )
+  }
+
+  if (!user) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Typography>Please log in to view your tasks.</Typography>
+      </Box>
+    )
+  }
+
   return (
     <Box sx={{ p: 2 }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
@@ -84,8 +153,15 @@ export default function TasksPage() {
         <Button variant="contained" color="secondary" onClick={openNew}>New Task</Button>
       </Stack>
 
-      <Stack spacing={2}>
-        {tasks.map((task) => (
+      {tasks.length === 0 ? (
+        <Paper variant="outlined" sx={{ p: 3, textAlign: "center" }}>
+          <Typography variant="body1" color="text.secondary">
+            No tasks yet. Create your first task!
+          </Typography>
+        </Paper>
+      ) : (
+        <Stack spacing={2}>
+          {tasks.map((task) => (
           <Paper key={task.id} variant="outlined" sx={{ p: 2, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start", minWidth: 0 }}>
               <Checkbox color="secondary" checked={task.completed} onChange={() => toggleComplete(task.id)} />
@@ -106,8 +182,9 @@ export default function TasksPage() {
               </IconButton>
             </Stack>
           </Paper>
-        ))}
-      </Stack>
+          ))}
+        </Stack>
+      )}
       <AddTaskModal open={showModal} close={closeModal} addNewTask={addOrUpdateTask} initialTask={editingTask} />
     </Box>
   )

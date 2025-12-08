@@ -1,26 +1,98 @@
 "use client"
 
-import { Box, Card, Stack, Typography, Paper, Button, Divider, Chip, Tooltip } from "@mui/material";
+import { Box, Card, Stack, Typography, Paper, Button, Divider, Chip, Tooltip, CircularProgress } from "@mui/material";
 import CourseCard from "./components/CourseCard";
 import FocusChart from "./components/FocusChart";
-import dummyContent from "@/lib/dummyContent";
 import Link from "next/link";
 import { useTheme } from '@mui/material/styles';
 import AddCourseModal from "./components/AddCourseModal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Course, Task } from "@/types/types";
 import AddTaskModal from "./components/AddTaskModal";
+import { useAuth } from "@/app/context/authContext";
+import { getCourses, addCourse } from "@/lib/firebase/courses";
+import { getTasks, addTask } from "@/lib/firebase/tasks";
+import { getPomodoroSessions, PomodoroSession } from "@/lib/firebase/pomodoro";
+import { toast } from "react-toastify";
 
 export default function Dashboard() {
   const theme = useTheme();
+  const { user } = useAuth();
 
   // Related to courses
-  const [courses, setCourses] = useState<Course[]>([...dummyContent.courses])
+  const [courses, setCourses] = useState<Course[]>([])
+  const [coursesLoading, setCoursesLoading] = useState(true)
 
-  const addNewCourse = (newCourse: Course) => {
-    setCourses(prev => [...prev, newCourse]);
+  // Related to tasks
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [tasksLoading, setTasksLoading] = useState(true)
+
+  // Related to pomodoro sessions
+  const [pomodoroSessions, setPomodoroSessions] = useState<PomodoroSession[]>([])
+  const [pomodoroLoading, setPomodoroLoading] = useState(true)
+
+  // Load data from Firebase
+  useEffect(() => {
+    if (user) {
+      loadCourses()
+      loadTasks()
+      loadPomodoroSessions()
+    }
+  }, [user])
+
+  const loadCourses = async () => {
+    if (!user) return
+    try {
+      setCoursesLoading(true)
+      const fetchedCourses = await getCourses(user.uid)
+      setCourses(fetchedCourses)
+    } catch (error) {
+      console.error("Error loading courses:", error)
+    } finally {
+      setCoursesLoading(false)
+    }
+  }
+
+  const loadTasks = async () => {
+    if (!user) return
+    try {
+      setTasksLoading(true)
+      const fetchedTasks = await getTasks(user.uid)
+      setTasks(fetchedTasks)
+    } catch (error) {
+      console.error("Error loading tasks:", error)
+      toast.error("Failed to load tasks")
+    } finally {
+      setTasksLoading(false)
+    }
+  }
+
+  const loadPomodoroSessions = async () => {
+    if (!user) return
+    try {
+      setPomodoroLoading(true)
+      const fetchedSessions = await getPomodoroSessions(user.uid)
+      setPomodoroSessions(fetchedSessions)
+    } catch (error) {
+      console.error("Error loading pomodoro sessions:", error)
+      // Don't show toast for pomodoro loading error - it's non-critical
+    } finally {
+      setPomodoroLoading(false)
+    }
+  }
+
+  const addNewCourse = async (newCourse: Course) => {
+    if (!user) return
+    try {
+      const newId = await addCourse(newCourse, user.uid)
+      newCourse.id = newId
+      await loadCourses()
+      toast.success("Course added successfully!")
+    } catch (error) {
+      console.error("Error adding course:", error)
+      toast.error("Failed to add course. Please try again.")
+    }
   };
-  //
 
   // Related to add courses modal
   const [showAddCourseModal, setAddCourseModal] = useState(false)
@@ -33,11 +105,17 @@ export default function Dashboard() {
   };
   //
 
-  // Related to tasks
-  const [tasks, setTasks] = useState<Task[]>([...dummyContent.tasks])
-
-  const addNewTask = (newTask: Task) => {
-    setTasks(prev => [...prev, newTask])
+  const addNewTask = async (newTask: Task) => {
+    if (!user) return
+    try {
+      const newId = await addTask(newTask, user.uid)
+      newTask.id = newId
+      await loadTasks()
+      toast.success("Task added successfully!")
+    } catch (error) {
+      console.error("Error adding task:", error)
+      toast.error("Failed to add task. Please try again.")
+    }
   }
   //
 
@@ -70,9 +148,19 @@ export default function Dashboard() {
               <Tooltip title="See all Courses"><Typography variant="h6" mb={1} fontWeight={700} sx={{ color: theme.palette.text.primary, width: "fit-content" }}>Courses</Typography></Tooltip>
             </Link>
             <Stack gap={1} overflow={"auto"} height={511}>
-              {courses.map((c) => (
-                <CourseCard course={c} key={c.id} />
-              ))}
+              {coursesLoading ? (
+                <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
+                  <CircularProgress size={24} />
+                </Box>
+              ) : courses.length === 0 ? (
+                <Typography variant="body2" color="text.secondary" sx={{ p: 2, textAlign: "center" }}>
+                  No courses yet. Add your first course!
+                </Typography>
+              ) : (
+                courses.map((c) => (
+                  <CourseCard course={c} key={c.id} />
+                ))
+              )}
             </Stack>
           </Paper>
 
@@ -103,7 +191,16 @@ export default function Dashboard() {
               </Link>
               <Stack spacing={1}>
                 {/* Task Cards */}
-                {tasks.slice(0, 3).map((task) => (
+                {tasksLoading ? (
+                  <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
+                    <CircularProgress size={24} />
+                  </Box>
+                ) : tasks.length === 0 ? (
+                  <Typography variant="body2" color="text.secondary" sx={{ p: 1, textAlign: "center" }}>
+                    No tasks yet
+                  </Typography>
+                ) : (
+                  tasks.slice(0, 3).map((task) => (
                   <Paper key={task.id} variant="outlined" sx={{ p: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Box>
                       <Typography variant="subtitle1" fontWeight={600}>{task.title}</Typography>
@@ -116,7 +213,8 @@ export default function Dashboard() {
                     </Box>
                     <Chip label={task.importance} size="small" color={task.importance === 'Hard' ? 'error' : task.importance === 'Medium' ? 'warning' : 'default'} />
                   </Paper>
-                ))}
+                  ))
+                )}
               </Stack>
             </Paper>
             <Paper variant="outlined" sx={{ p: 1.5, backgroundColor: (t) => t.palette.background.paper, boxShadow: 1 }}>
