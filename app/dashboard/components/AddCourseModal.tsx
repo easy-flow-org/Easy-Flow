@@ -28,6 +28,7 @@ export default function AddCourseModal(props: ModalProps) {
       days: data.get('courseDays') as string,
       startTime: data.get('startTime') as string,
       endTime: data.get('endTime') as string,
+      notes: data.get('courseNotes') as string,
     };
     // add course CLIENT SIDE
     props.addNewCourse(newCourse)
@@ -106,8 +107,21 @@ export default function AddCourseModal(props: ModalProps) {
               defaultValue={props.editingCourse?.description ?? ''}
               {...sharedProps}
               multiline
+              rows={3}
+              sx={{ width: "100%", maxWidth: "320px" }}
+            />
+            <TextField
+              id="course-notes"
+              name="courseNotes"
+              label="Course Notes"
+              type="text"
+              defaultValue={props.editingCourse?.notes ?? ''}
+              {...sharedProps}
+              multiline
               rows={4}
-              sx={{ width: "100%", maxWidth: "320px" }} />
+              placeholder="Add notes about this course..."
+              sx={{ width: "100%", maxWidth: "320px" }}
+            />
           </form>
         </DialogContent>
         <DialogActions>
