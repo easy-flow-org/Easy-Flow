@@ -34,10 +34,10 @@ export default function HeroNav() {
           </Stack>
 
           <Stack direction={"row"} spacing={"2rem"} flexShrink={0} marginLeft={"auto"} marginRight={"2rem"}>
-            <NavLink href="#features" color="inherit" underline="none" sx={{ cursor: 'pointer' }}>
+            <NavLink component={NextLink} href="#features" color="inherit" variant="inherit" underline="none">
               Features
             </NavLink>
-            <NavLink href="#about" color="inherit" underline="none" sx={{ cursor: 'pointer' }}>
+            <NavLink component={NextLink} href="#about" color="inherit" variant="inherit" underline="none">
               About
             </NavLink>
           </Stack>
