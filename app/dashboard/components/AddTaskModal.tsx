@@ -78,7 +78,6 @@ export default function AddTaskModal(props: ModalProps) {
       title: (data.get('title') as string) ?? '',
       notes: (data.get('notes') as string) ?? '',
       dueDate: due,
-      dueTime: dueTime,
       importance: (data.get('importance') as Task['importance']) ?? 'Easy',
       completed: props.initialTask?.completed ?? false,
     }
