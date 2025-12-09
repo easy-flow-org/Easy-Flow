@@ -119,7 +119,7 @@ export default function Dashboard() {
   const handleAddCourseOpen = () => setAddCourseModal(true);
   const handleAddCourseClose = () => setAddCourseModal(false);
 
-  const addNewTask = async (newTask: Task) => {
+  const addNewTask = async (newTask: TaskBase) => {
     if (!user) return
     try {
       const newId = await addTask(newTask, user.uid)
