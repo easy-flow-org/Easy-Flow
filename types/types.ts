@@ -13,6 +13,7 @@ export interface TaskBase {
   title: string;
   notes: string;
   dueDate: Date;
+  dueTime?: string;
   importance: "Easy" | "Medium" | "Hard";
   completed: boolean;
 }

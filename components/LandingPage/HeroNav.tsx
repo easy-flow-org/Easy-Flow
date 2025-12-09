@@ -12,7 +12,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   padding: theme.spacing(1, 2),
 }))
 
-const NavLink = styled(Link)(({ theme }) => ({
+const NavLink = styled(Link)<{ component?: any }>(({ theme }) => ({
   cursor: "pointer",
   transition: "color 0.2s ease",
   "&:hover": {
