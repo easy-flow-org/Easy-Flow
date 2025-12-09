@@ -32,7 +32,8 @@ import {
   DialogActions,
   Slider,
   FormControlLabel,
-  Switch
+  Switch,
+  Alert
 } from "@mui/material";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
@@ -50,6 +51,7 @@ import Grid3x3Icon from '@mui/icons-material/Grid3x3';
 import MemoryIcon from '@mui/icons-material/Memory';
 import CasinoIcon from '@mui/icons-material/Casino';
 import SettingsIcon from '@mui/icons-material/Settings';
+import CloseIcon from '@mui/icons-material/Close';
 import { useState, useEffect, useRef } from "react";
 
 type TimerMode = 'work' | 'shortBreak' | 'longBreak';
@@ -61,17 +63,45 @@ interface GameScore {
   diceRoll: number;
 }
 
-const TIMER_SETTINGS = {
-  work: 25 * 60, // 25 minutes in seconds
-  shortBreak: 5 * 60, // 5 minutes
-  longBreak: 15 * 60, // 15 minutes
+interface TimerSettings {
+  work: number; // minutes
+  shortBreak: number; // minutes
+  longBreak: number; // minutes
+  autoStartBreaks: boolean;
+  autoStartPomodoros: boolean;
+  longBreakInterval: number;
+  soundEnabled: boolean;
+}
+
+const DEFAULT_SETTINGS: TimerSettings = {
+  work: 25,
+  shortBreak: 5,
+  longBreak: 15,
+  autoStartBreaks: false,
+  autoStartPomodoros: false,
+  longBreakInterval: 4,
+  soundEnabled: true,
 };
 
+const GAME_TIME_LIMIT = 180; // 3 minutes in seconds
+
 // Mini-game: Tic Tac Toe
-const TicTacToeGame = ({ onComplete }: { onComplete: () => void }) => {
+const TicTacToeGame = ({ onComplete, gameTimeLeft, setGameTimeLeft }: { 
+  onComplete: () => void;
+  gameTimeLeft: number;
+  setGameTimeLeft: (time: number) => void;
+}) => {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
   const [winner, setWinner] = useState<string | null>(null);
+  const [gameOver, setGameOver] = useState(false);
+
+  useEffect(() => {
+    if (gameTimeLeft <= 0 && !winner && !gameOver) {
+      setGameOver(true);
+      setTimeout(() => onComplete(), 1500);
+    }
+  }, [gameTimeLeft, winner, gameOver, onComplete]);
 
   const calculateWinner = (squares: string[]) => {
     const lines = [
@@ -90,7 +120,7 @@ const TicTacToeGame = ({ onComplete }: { onComplete: () => void }) => {
   };
 
   const handleClick = (index: number) => {
-    if (board[index] || winner) return;
+    if (board[index] || winner || gameOver) return;
     
     const newBoard = [...board];
     newBoard[index] = isXNext ? 'X' : 'O';
@@ -109,9 +139,17 @@ const TicTacToeGame = ({ onComplete }: { onComplete: () => void }) => {
 
   return (
     <Box sx={{ p: 3, textAlign: 'center' }}>
-      <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
-        Tic Tac Toe
-      </Typography>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+        <Typography variant="h6">
+          Tic Tac Toe
+        </Typography>
+        <Chip 
+          label={`${Math.floor(gameTimeLeft / 60)}:${(gameTimeLeft % 60).toString().padStart(2, '0')}`}
+          color="warning"
+          size="small"
+        />
+      </Stack>
+      
       <Box sx={{ 
         display: 'grid', 
         gridTemplateColumns: 'repeat(3, 1fr)', 
@@ -133,29 +171,41 @@ const TicTacToeGame = ({ onComplete }: { onComplete: () => void }) => {
               border: `2px solid ${alpha('#1976d2', 0.2)}`,
               '&:hover': {
                 bgcolor: alpha('#1976d2', 0.2),
-              }
+              },
+              opacity: gameOver ? 0.5 : 1,
             }}
-            disabled={!!cell || !!winner}
+            disabled={!!cell || !!winner || gameOver}
           >
             {cell}
           </Button>
         ))}
       </Box>
+      
+      {gameOver && !winner && (
+        <Alert severity="warning" sx={{ mt: 2 }}>
+          Time's up! Game over.
+        </Alert>
+      )}
       {winner && (
-        <Typography variant="h6" color="primary">
+        <Alert severity="success" sx={{ mt: 2 }}>
           {winner} wins!
-        </Typography>
+        </Alert>
       )}
     </Box>
   );
 };
 
 // Mini-game: Memory Card Game
-const MemoryGame = ({ onComplete }: { onComplete: () => void }) => {
+const MemoryGame = ({ onComplete, gameTimeLeft, setGameTimeLeft }: { 
+  onComplete: () => void;
+  gameTimeLeft: number;
+  setGameTimeLeft: (time: number) => void;
+}) => {
   const [cards, setCards] = useState<number[]>([]);
   const [flipped, setFlipped] = useState<number[]>([]);
   const [matched, setMatched] = useState<number[]>([]);
   const [moves, setMoves] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
 
   useEffect(() => {
     const numbers = [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6];
@@ -164,13 +214,20 @@ const MemoryGame = ({ onComplete }: { onComplete: () => void }) => {
   }, []);
 
   useEffect(() => {
+    if (gameTimeLeft <= 0 && matched.length < 12 && !gameOver) {
+      setGameOver(true);
+      setTimeout(() => onComplete(), 1500);
+    }
+  }, [gameTimeLeft, matched, gameOver, onComplete]);
+
+  useEffect(() => {
     if (matched.length === 12) {
       setTimeout(() => onComplete(), 1500);
     }
   }, [matched, onComplete]);
 
   const handleCardClick = (index: number) => {
-    if (flipped.includes(index) || matched.includes(index) || flipped.length === 2) return;
+    if (flipped.includes(index) || matched.includes(index) || flipped.length === 2 || gameOver) return;
     
     const newFlipped = [...flipped, index];
     setFlipped(newFlipped);
@@ -189,9 +246,24 @@ const MemoryGame = ({ onComplete }: { onComplete: () => void }) => {
 
   return (
     <Box sx={{ p: 3, textAlign: 'center' }}>
-      <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
-        Memory Game - Moves: {moves}
-      </Typography>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+        <Typography variant="h6">
+          Memory Game
+        </Typography>
+        <Stack direction="row" spacing={1} alignItems="center">
+          <Chip 
+            label={`Moves: ${moves}`}
+            size="small"
+            color="info"
+          />
+          <Chip 
+            label={`${Math.floor(gameTimeLeft / 60)}:${(gameTimeLeft % 60).toString().padStart(2, '0')}`}
+            color="warning"
+            size="small"
+          />
+        </Stack>
+      </Stack>
+      
       <Box sx={{ 
         display: 'grid', 
         gridTemplateColumns: 'repeat(4, 1fr)', 
@@ -215,35 +287,56 @@ const MemoryGame = ({ onComplete }: { onComplete: () => void }) => {
               border: `2px solid ${alpha('#9c27b0', 0.2)}`,
               '&:hover': {
                 bgcolor: alpha('#9c27b0', 0.2),
-              }
+              },
+              opacity: gameOver ? 0.5 : 1,
             }}
-            disabled={matched.includes(index)}
+            disabled={matched.includes(index) || gameOver}
           >
             {flipped.includes(index) || matched.includes(index) ? value : '?'}
           </Button>
         ))}
       </Box>
+      
+      {gameOver && matched.length < 12 && (
+        <Alert severity="warning" sx={{ mt: 2 }}>
+          Time's up! {matched.length / 2} pairs found.
+        </Alert>
+      )}
       {matched.length === 12 && (
-        <Typography variant="h6" color="secondary">
-          Perfect! All matches found!
-        </Typography>
+        <Alert severity="success" sx={{ mt: 2 }}>
+          Perfect! All matches found in {moves} moves!
+        </Alert>
       )}
     </Box>
   );
 };
 
 // Mini-game: Dice Roll Challenge
-const DiceRollGame = ({ onComplete }: { onComplete: () => void }) => {
+const DiceRollGame = ({ onComplete, gameTimeLeft, setGameTimeLeft }: { 
+  onComplete: () => void;
+  gameTimeLeft: number;
+  setGameTimeLeft: (time: number) => void;
+}) => {
   const [target, setTarget] = useState(0);
   const [rolls, setRolls] = useState<number[]>([]);
   const [currentRoll, setCurrentRoll] = useState<number | null>(null);
   const [message, setMessage] = useState('');
+  const [gameOver, setGameOver] = useState(false);
 
   useEffect(() => {
     setTarget(Math.floor(Math.random() * 6) + 1);
   }, []);
 
+  useEffect(() => {
+    if (gameTimeLeft <= 0 && !gameOver) {
+      setGameOver(true);
+      setTimeout(() => onComplete(), 1500);
+    }
+  }, [gameTimeLeft, gameOver, onComplete]);
+
   const rollDice = () => {
+    if (gameOver) return;
+    
     const roll = Math.floor(Math.random() * 6) + 1;
     setCurrentRoll(roll);
     setRolls([...rolls, roll]);
@@ -251,8 +344,8 @@ const DiceRollGame = ({ onComplete }: { onComplete: () => void }) => {
     if (roll === target) {
       setMessage('🎯 Bullseye! You matched the target!');
       setTimeout(() => onComplete(), 1500);
-    } else if (rolls.length >= 2) {
-      setMessage('Try again next time!');
+    } else if (rolls.length >= 5) {
+      setMessage('Maximum rolls reached! Try again.');
       setTimeout(() => onComplete(), 1500);
     } else {
       setMessage(`Rolled ${roll}, target is ${target}`);
@@ -261,16 +354,23 @@ const DiceRollGame = ({ onComplete }: { onComplete: () => void }) => {
 
   return (
     <Box sx={{ p: 3, textAlign: 'center' }}>
-      <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
-        Dice Roll Challenge
-      </Typography>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+        <Typography variant="h6">
+          Dice Roll Challenge
+        </Typography>
+        <Chip 
+          label={`${Math.floor(gameTimeLeft / 60)}:${(gameTimeLeft % 60).toString().padStart(2, '0')}`}
+          color="warning"
+          size="small"
+        />
+      </Stack>
       
       <Box sx={{ mb: 3 }}>
         <Typography variant="body1" gutterBottom>
           Target: <strong>{target}</strong>
         </Typography>
         <Typography variant="caption" color="text.secondary" display="block">
-          Roll the dice to match the target number
+          Roll the dice to match the target number (Max 5 rolls)
         </Typography>
       </Box>
 
@@ -300,18 +400,24 @@ const DiceRollGame = ({ onComplete }: { onComplete: () => void }) => {
           startIcon={<CasinoIcon />}
           sx={{
             bgcolor: '#2e7d32',
-            '&:hover': { bgcolor: '#1b5e20' }
+            '&:hover': { bgcolor: '#1b5e20' },
+            opacity: gameOver ? 0.5 : 1,
           }}
-          disabled={rolls.length >= 3}
+          disabled={rolls.length >= 5 || gameOver}
         >
-          Roll Dice ({3 - rolls.length} left)
+          Roll Dice ({5 - rolls.length} left)
         </Button>
       </Box>
 
+      {gameOver && !message.includes('🎯') && (
+        <Alert severity="warning" sx={{ mt: 2 }}>
+          Time's up! Target was {target}.
+        </Alert>
+      )}
       {message && (
-        <Typography variant="body1" color={message.includes('🎯') ? 'success.main' : 'text.primary'}>
+        <Alert severity={message.includes('🎯') ? "success" : "info"} sx={{ mt: 2 }}>
           {message}
-        </Typography>
+        </Alert>
       )}
 
       {rolls.length > 0 && (
@@ -325,31 +431,181 @@ const DiceRollGame = ({ onComplete }: { onComplete: () => void }) => {
   );
 };
 
+// Settings Dialog Component
+const SettingsDialog = ({ 
+  open, 
+  onClose, 
+  settings, 
+  onSettingsChange 
+}: { 
+  open: boolean;
+  onClose: () => void;
+  settings: TimerSettings;
+  onSettingsChange: (newSettings: TimerSettings) => void;
+}) => {
+  const [localSettings, setLocalSettings] = useState(settings);
+
+  const handleSave = () => {
+    onSettingsChange(localSettings);
+    onClose();
+  };
+
+  const handleReset = () => {
+    setLocalSettings(DEFAULT_SETTINGS);
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6">Timer Settings</Typography>
+          <IconButton onClick={onClose} size="small">
+            <CloseIcon />
+          </IconButton>
+        </Stack>
+      </DialogTitle>
+      
+      <DialogContent>
+        <Stack spacing={3} sx={{ mt: 2 }}>
+          {/* Work Duration */}
+          <Box>
+            <Typography variant="subtitle2" gutterBottom>
+              Focus Time: {localSettings.work} minutes
+            </Typography>
+            <Slider
+              value={localSettings.work}
+              onChange={(e, value) => setLocalSettings({...localSettings, work: value as number})}
+              min={5}
+              max={60}
+              step={5}
+              marks
+              valueLabelDisplay="auto"
+            />
+          </Box>
+
+          {/* Short Break Duration */}
+          <Box>
+            <Typography variant="subtitle2" gutterBottom>
+              Short Break: {localSettings.shortBreak} minutes
+            </Typography>
+            <Slider
+              value={localSettings.shortBreak}
+              onChange={(e, value) => setLocalSettings({...localSettings, shortBreak: value as number})}
+              min={1}
+              max={15}
+              step={1}
+              marks
+              valueLabelDisplay="auto"
+            />
+          </Box>
+
+          {/* Long Break Duration */}
+          <Box>
+            <Typography variant="subtitle2" gutterBottom>
+              Long Break: {localSettings.longBreak} minutes
+            </Typography>
+            <Slider
+              value={localSettings.longBreak}
+              onChange={(e, value) => setLocalSettings({...localSettings, longBreak: value as number})}
+              min={5}
+              max={30}
+              step={5}
+              marks
+              valueLabelDisplay="auto"
+            />
+          </Box>
+
+          {/* Long Break Interval */}
+          <Box>
+            <Typography variant="subtitle2" gutterBottom>
+              Long Break After: {localSettings.longBreakInterval} Pomodoros
+            </Typography>
+            <Slider
+              value={localSettings.longBreakInterval}
+              onChange={(e, value) => setLocalSettings({...localSettings, longBreakInterval: value as number})}
+              min={2}
+              max={8}
+              step={1}
+              marks
+              valueLabelDisplay="auto"
+            />
+          </Box>
+
+          {/* Auto Start Settings */}
+          <Stack spacing={2}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={localSettings.autoStartBreaks}
+                  onChange={(e) => setLocalSettings({...localSettings, autoStartBreaks: e.target.checked})}
+                />
+              }
+              label="Auto-start breaks"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={localSettings.autoStartPomodoros}
+                  onChange={(e) => setLocalSettings({...localSettings, autoStartPomodoros: e.target.checked})}
+                />
+              }
+              label="Auto-start next Pomodoro"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={localSettings.soundEnabled}
+                  onChange={(e) => setLocalSettings({...localSettings, soundEnabled: e.target.checked})}
+                />
+              }
+              label="Enable sounds"
+            />
+          </Stack>
+        </Stack>
+      </DialogContent>
+      
+      <DialogActions sx={{ p: 3, pt: 0 }}>
+        <Button onClick={handleReset} color="inherit">
+          Reset to Defaults
+        </Button>
+        <Button onClick={handleSave} variant="contained" color="primary">
+          Save Settings
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
 export default function PomodoroPage() {
   const theme = useTheme();
   const [mode, setMode] = useState<TimerMode>('work');
-  const [timeLeft, setTimeLeft] = useState(TIMER_SETTINGS.work);
+  const [timeLeft, setTimeLeft] = useState(DEFAULT_SETTINGS.work * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [pomodorosCompleted, setPomodorosCompleted] = useState(0);
   const [activeGame, setActiveGame] = useState<GameType>(null);
   const [showGameModal, setShowGameModal] = useState(false);
+  const [gameTimeLeft, setGameTimeLeft] = useState(GAME_TIME_LIMIT);
   const [gameScores, setGameScores] = useState<GameScore>({
     ticTacToe: 0,
     memory: 0,
     diceRoll: 0
   });
-  const [showInstructions, setShowInstructions] = useState(false);
-  const [showSettingsModal, setShowSettingsModal] = useState(false);
-  const [customSettings, setCustomSettings] = useState({
-    work: Math.floor(TIMER_SETTINGS.work / 60),
-    shortBreak: Math.floor(TIMER_SETTINGS.shortBreak / 60),
-    longBreak: Math.floor(TIMER_SETTINGS.longBreak / 60),
+  const [settings, setSettings] = useState<TimerSettings>(DEFAULT_SETTINGS);
+  const [showSettings, setShowSettings] = useState(false);
+  
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const gameTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Convert settings to seconds
+  const getTimerSettings = () => ({
+    work: settings.work * 60,
+    shortBreak: settings.shortBreak * 60,
+    longBreak: settings.longBreak * 60,
   });
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (isRunning && timeLeft > 0) {
-      intervalRef.current = setInterval(() => {
+      timerRef.current = setInterval(() => {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
     } else if (timeLeft === 0) {
@@ -357,27 +613,53 @@ export default function PomodoroPage() {
     }
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [isRunning, timeLeft]);
+
+  useEffect(() => {
+    if (showGameModal && activeGame && gameTimeLeft > 0) {
+      gameTimerRef.current = setInterval(() => {
+        setGameTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (gameTimeLeft === 0 && activeGame) {
+      if (gameTimerRef.current) clearInterval(gameTimerRef.current);
+    }
+
+    return () => {
+      if (gameTimerRef.current) clearInterval(gameTimerRef.current);
+    };
+  }, [showGameModal, activeGame, gameTimeLeft]);
 
   const handleTimerComplete = () => {
     setIsRunning(false);
     if (mode === 'work') {
-      setPomodorosCompleted((prev) => prev + 1);
-      const nextMode = (pomodorosCompleted + 1) % 4 === 0 ? 'longBreak' : 'shortBreak';
+      const newPomodoros = pomodorosCompleted + 1;
+      setPomodorosCompleted(newPomodoros);
+      const nextMode = newPomodoros % settings.longBreakInterval === 0 ? 'longBreak' : 'shortBreak';
       setMode(nextMode);
-      setTimeLeft(TIMER_SETTINGS[nextMode]);
+      setTimeLeft(getTimerSettings()[nextMode]);
+      
+      // Auto-start break if enabled
+      if (settings.autoStartBreaks) {
+        setIsRunning(true);
+      }
       
       // Suggest a game after work session
       if (nextMode === 'shortBreak' || nextMode === 'longBreak') {
         setTimeout(() => {
           setShowGameModal(true);
+          setGameTimeLeft(GAME_TIME_LIMIT);
         }, 500);
       }
     } else {
       setMode('work');
-      setTimeLeft(TIMER_SETTINGS.work);
+      setTimeLeft(getTimerSettings().work);
+      
+      // Auto-start next pomodoro if enabled
+      if (settings.autoStartPomodoros) {
+        setIsRunning(true);
+      }
     }
   };
 
@@ -387,42 +669,51 @@ export default function PomodoroPage() {
 
   const resetTimer = () => {
     setIsRunning(false);
-    setTimeLeft(TIMER_SETTINGS[mode]);
+    setTimeLeft(getTimerSettings()[mode]);
   };
 
   const switchMode = (newMode: TimerMode) => {
     setIsRunning(false);
     setMode(newMode);
-    setTimeLeft(TIMER_SETTINGS[newMode]);
+    setTimeLeft(getTimerSettings()[newMode]);
   };
 
   const skipToNext = () => {
     setIsRunning(false);
     if (mode === 'work') {
-      const nextMode = pomodorosCompleted % 4 === 3 ? 'longBreak' : 'shortBreak';
+      const nextMode = pomodorosCompleted % settings.longBreakInterval === settings.longBreakInterval - 1 
+        ? 'longBreak' 
+        : 'shortBreak';
       setMode(nextMode);
-      setTimeLeft(TIMER_SETTINGS[nextMode]);
+      setTimeLeft(getTimerSettings()[nextMode]);
     } else {
       setMode('work');
-      setTimeLeft(TIMER_SETTINGS.work);
+      setTimeLeft(getTimerSettings().work);
     }
   };
 
   const startGame = (gameType: GameType) => {
     setActiveGame(gameType);
     setShowGameModal(true);
+    setGameTimeLeft(GAME_TIME_LIMIT);
   };
 
   const completeGame = () => {
     setShowGameModal(false);
     if (activeGame) {
-      const gameKey = activeGame === 'tic-tac-toe' ? 'ticTacToe' : activeGame === 'memory' ? 'memory' : 'diceRoll';
       setGameScores(prev => ({
         ...prev,
-        [gameKey]: prev[gameKey as keyof GameScore] + 1
+        [activeGame]: prev[activeGame] + 1
       }));
     }
     setActiveGame(null);
+    if (gameTimerRef.current) clearInterval(gameTimerRef.current);
+  };
+
+  const handleSettingsChange = (newSettings: TimerSettings) => {
+    setSettings(newSettings);
+    // Update current timer if mode changes
+    setTimeLeft(newSettings[mode] * 60);
   };
 
   const formatTime = (seconds: number) => {
@@ -431,7 +722,7 @@ export default function PomodoroPage() {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const progress = ((TIMER_SETTINGS[mode] - timeLeft) / TIMER_SETTINGS[mode]) * 100;
+  const progress = ((getTimerSettings()[mode] - timeLeft) / getTimerSettings()[mode]) * 100;
 
   const getModeColor = () => {
     switch (mode) {
@@ -439,22 +730,6 @@ export default function PomodoroPage() {
       case 'shortBreak': return theme.palette.secondary.main;
       case 'longBreak': return theme.palette.success.main;
     }
-  };
-
-  const handleSaveSettings = () => {
-    const newSettings = {
-      work: customSettings.work * 60,
-      shortBreak: customSettings.shortBreak * 60,
-      longBreak: customSettings.longBreak * 60,
-    };
-    
-    // Update timer settings
-    Object.assign(TIMER_SETTINGS, newSettings);
-    
-    // Reset current timer
-    setTimeLeft(newSettings[mode]);
-    setIsRunning(false);
-    setShowSettingsModal(false);
   };
 
   return (
@@ -501,10 +776,30 @@ export default function PomodoroPage() {
                       Focus Flow Timer
                     </Typography>
                     <Typography variant="subtitle1" color="text.secondary" sx={{ mt: 1 }}>
-                      Stay productive with timed sessions and fun break activities
+                      Customize your focus sessions and enjoy timed break games
                     </Typography>
                   </Box>
                 </Stack>
+
+                {/* Settings Button */}
+                <IconButton
+                  onClick={() => setShowSettings(true)}
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+                    borderRadius: 2,
+                    background: alpha(theme.palette.background.paper, 0.8),
+                    backdropFilter: 'blur(10px)',
+                    '&:hover': {
+                      background: alpha(theme.palette.primary.main, 0.1),
+                      transform: 'scale(1.05)',
+                    }
+                  }}
+                >
+                  <SettingsIcon />
+                </IconButton>
               </Box>
 
               <Box sx={{ 
@@ -560,7 +855,7 @@ export default function PomodoroPage() {
                               }}
                             >
                               <Typography variant="body1" fontWeight={600}>
-                                {item.label}
+                                {item.label} ({settings[item.mode]} min)
                               </Typography>
                             </Button>
                           ))}
@@ -661,24 +956,6 @@ export default function PomodoroPage() {
                         >
                           <SkipNextIcon fontSize="large" />
                         </IconButton>
-
-                        <IconButton
-                          onClick={() => setShowSettingsModal(true)}
-                          sx={{
-                            width: 72,
-                            height: 72,
-                            background: `linear-gradient(135deg, ${theme.palette.warning.main}, ${theme.palette.warning.dark})`,
-                            color: 'white',
-                            boxShadow: `0 8px 24px ${alpha(theme.palette.warning.main, 0.3)}`,
-                            transition: 'all 0.3s ease',
-                            '&:hover': {
-                              transform: 'scale(1.05)',
-                              boxShadow: `0 12px 32px ${alpha(theme.palette.warning.main, 0.4)}`,
-                            }
-                          }}
-                        >
-                          <SettingsIcon fontSize="large" />
-                        </IconButton>
                       </Stack>
 
                       {/* Stats */}
@@ -696,13 +973,16 @@ export default function PomodoroPage() {
                             <Typography variant="h4" fontWeight={800} color="primary">
                               {pomodorosCompleted}
                             </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              Next long break after {settings.longBreakInterval - (pomodorosCompleted % settings.longBreakInterval)}
+                            </Typography>
                           </Box>
                           <Box sx={{ textAlign: 'right' }}>
                             <Typography variant="body2" color="text.secondary">
                               Current Streak
                             </Typography>
                             <Typography variant="h4" fontWeight={800} color="secondary">
-                              {Math.floor(pomodorosCompleted / 4)} days
+                              {Math.floor(pomodorosCompleted / settings.longBreakInterval)} days
                             </Typography>
                           </Box>
                         </Stack>
@@ -725,12 +1005,12 @@ export default function PomodoroPage() {
                         <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
                           <SportsEsportsIcon sx={{ color: theme.palette.secondary.main, fontSize: 28 }} />
                           <Typography variant="h6" fontWeight={700}>
-                            Break Games
+                            Break Games (3 min)
                           </Typography>
                         </Stack>
                         
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                          Quick games to refresh your mind during breaks
+                          Quick 3-minute games to refresh your mind
                         </Typography>
 
                         <Stack spacing={2}>
@@ -811,10 +1091,10 @@ export default function PomodoroPage() {
                             border: `1px solid ${alpha(theme.palette.info.main, 0.1)}`,
                           }}>
                             <Typography variant="body2" fontWeight={600} color="info.main" gutterBottom>
-                              🎯 Deep Focus
+                              ⚙️ Customize Your Flow
                             </Typography>
                             <Typography variant="caption" color="text.secondary">
-                              Turn off notifications and focus on one task at a time
+                              Adjust timer durations in settings for your perfect workflow
                             </Typography>
                           </Paper>
 
@@ -825,10 +1105,10 @@ export default function PomodoroPage() {
                             border: `1px solid ${alpha(theme.palette.success.main, 0.1)}`,
                           }}>
                             <Typography variant="body2" fontWeight={600} color="success.main" gutterBottom>
-                              ☕ Active Breaks
+                              ⏱️ Timed Breaks
                             </Typography>
                             <Typography variant="caption" color="text.secondary">
-                              Stand up, stretch, or play a quick game during breaks
+                              Games have 3-minute timers to keep breaks productive
                             </Typography>
                           </Paper>
 
@@ -839,10 +1119,10 @@ export default function PomodoroPage() {
                             border: `1px solid ${alpha(theme.palette.warning.main, 0.1)}`,
                           }}>
                             <Typography variant="body2" fontWeight={600} color="warning.main" gutterBottom>
-                              📊 Track Progress
+                              🔄 Auto Transitions
                             </Typography>
                             <Typography variant="caption" color="text.secondary">
-                              Monitor your pomodoros to build consistent habits
+                              Enable auto-start in settings for seamless workflow
                             </Typography>
                           </Paper>
                         </Stack>
@@ -859,7 +1139,10 @@ export default function PomodoroPage() {
       {/* Game Modal */}
       <Modal
         open={showGameModal}
-        onClose={() => setShowGameModal(false)}
+        onClose={() => {
+          setShowGameModal(false);
+          if (gameTimerRef.current) clearInterval(gameTimerRef.current);
+        }}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
@@ -885,25 +1168,58 @@ export default function PomodoroPage() {
               background: `linear-gradient(135deg, ${theme.palette.secondary.main}, ${theme.palette.secondary.dark})`,
               color: 'white',
               textAlign: 'center',
+              position: 'relative',
             }}>
+              <IconButton
+                onClick={() => {
+                  setShowGameModal(false);
+                  if (gameTimerRef.current) clearInterval(gameTimerRef.current);
+                }}
+                sx={{
+                  position: 'absolute',
+                  top: 8,
+                  right: 8,
+                  color: 'white',
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
               <CelebrationIcon sx={{ fontSize: 48, mb: 2 }} />
               <Typography variant="h5" fontWeight={700}>
                 Break Time! 🎮
               </Typography>
               <Typography variant="body2" sx={{ opacity: 0.9, mt: 1 }}>
-                Refresh your mind with a quick game
+                3-minute game challenge
               </Typography>
             </Box>
 
             <Box sx={{ p: 3 }}>
-              {activeGame === 'tic-tac-toe' && <TicTacToeGame onComplete={completeGame} />}
-              {activeGame === 'memory' && <MemoryGame onComplete={completeGame} />}
-              {activeGame === 'dice-roll' && <DiceRollGame onComplete={completeGame} />}
+              {activeGame === 'tic-tac-toe' && (
+                <TicTacToeGame 
+                  onComplete={completeGame} 
+                  gameTimeLeft={gameTimeLeft}
+                  setGameTimeLeft={setGameTimeLeft}
+                />
+              )}
+              {activeGame === 'memory' && (
+                <MemoryGame 
+                  onComplete={completeGame} 
+                  gameTimeLeft={gameTimeLeft}
+                  setGameTimeLeft={setGameTimeLeft}
+                />
+              )}
+              {activeGame === 'dice-roll' && (
+                <DiceRollGame 
+                  onComplete={completeGame} 
+                  gameTimeLeft={gameTimeLeft}
+                  setGameTimeLeft={setGameTimeLeft}
+                />
+              )}
               
               {!activeGame && (
                 <Stack spacing={2}>
                   <Typography variant="body1" textAlign="center" color="text.secondary" sx={{ mb: 2 }}>
-                    Choose a game to play during your break
+                    Choose a 3-minute game for your break
                   </Typography>
                   <Button 
                     fullWidth 
@@ -950,111 +1266,12 @@ export default function PomodoroPage() {
       </Modal>
 
       {/* Settings Dialog */}
-      <Dialog 
-        open={showSettingsModal} 
-        onClose={() => setShowSettingsModal(false)}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: 3,
-            background: `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
-            backdropFilter: 'blur(10px)',
-          }
-        }}
-      >
-        <DialogTitle sx={{ 
-          fontWeight: 700, 
-          fontSize: '1.3rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 2,
-        }}>
-          <SettingsIcon sx={{ color: theme.palette.primary.main }} />
-          Customize Timer Settings
-        </DialogTitle>
-
-        <DialogContent sx={{ pt: 3 }}>
-          <Stack spacing={4}>
-            {/* Work Session */}
-            <Box>
-              <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>
-                Work Session: {customSettings.work} minutes
-              </Typography>
-              <Slider
-                value={customSettings.work}
-                onChange={(_, value) => setCustomSettings(prev => ({ ...prev, work: value as number }))}
-                min={1}
-                max={60}
-                marks
-                valueLabelDisplay="auto"
-                sx={{
-                  '& .MuiSlider-mark': {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.3),
-                  }
-                }}
-              />
-            </Box>
-
-            {/* Short Break */}
-            <Box>
-              <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>
-                Short Break: {customSettings.shortBreak} minutes
-              </Typography>
-              <Slider
-                value={customSettings.shortBreak}
-                onChange={(_, value) => setCustomSettings(prev => ({ ...prev, shortBreak: value as number }))}
-                min={1}
-                max={15}
-                marks
-                valueLabelDisplay="auto"
-                sx={{
-                  '& .MuiSlider-mark': {
-                    backgroundColor: alpha(theme.palette.secondary.main, 0.3),
-                  }
-                }}
-              />
-            </Box>
-
-            {/* Long Break */}
-            <Box>
-              <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>
-                Long Break: {customSettings.longBreak} minutes
-              </Typography>
-              <Slider
-                value={customSettings.longBreak}
-                onChange={(_, value) => setCustomSettings(prev => ({ ...prev, longBreak: value as number }))}
-                min={1}
-                max={30}
-                marks
-                valueLabelDisplay="auto"
-                sx={{
-                  '& .MuiSlider-mark': {
-                    backgroundColor: alpha(theme.palette.success.main, 0.3),
-                  }
-                }}
-              />
-            </Box>
-          </Stack>
-        </DialogContent>
-
-        <DialogActions sx={{ p: 3, gap: 1 }}>
-          <Button 
-            onClick={() => setShowSettingsModal(false)}
-            sx={{ borderRadius: 2 }}
-          >
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleSaveSettings}
-            variant="contained"
-            color="primary"
-            sx={{ borderRadius: 2, px: 3 }}
-          >
-            Save Settings
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <SettingsDialog
+        open={showSettings}
+        onClose={() => setShowSettings(false)}
+        settings={settings}
+        onSettingsChange={handleSettingsChange}
+      />
     </>
   );
 }

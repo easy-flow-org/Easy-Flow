@@ -46,7 +46,7 @@ import {
   Lightbulb,
   KeyboardDoubleArrowDown
 } from "@mui/icons-material"
-import { Task } from "@/types/types"
+import { Task, TaskBase } from "@/types/types"
 import AddTaskModal from "../components/AddTaskModal"
 import { useAuth } from "@/app/context/authContext"
 import { getTasks, addTask, updateTask, deleteTask, toggleTaskComplete } from "@/lib/firebase/tasks"
@@ -165,7 +165,7 @@ export default function TasksPage() {
     setShowModal(false)
   }
 
-  const addOrUpdateTask = async (task: Task) => {
+  const addOrUpdateTask = async (task: TaskBase) => {
     if (!user) return
     try {
       const isUpdate = tasks.some((t) => t.id === task.id)
@@ -174,7 +174,6 @@ export default function TasksPage() {
         toast.success("Task updated successfully!")
       } else {
         const newId = await addTask(task, user.uid)
-        task.id = newId
         toast.success("Task created successfully!")
       }
       await loadTasks()
