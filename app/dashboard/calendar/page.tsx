@@ -683,10 +683,9 @@ export default function CalendarPage() {
             </Card>
           </Zoom>
         </Box>
-      </Stack>
 
-      {/* Events Panel */}
-      <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 34%' } }}>
+        {/* Events Panel */}
+        <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 34%' } }}>
         <Zoom in={true} timeout={1400}>
           <Stack spacing={3}>
             {/* Selected Day Events */}
@@ -703,23 +702,23 @@ export default function CalendarPage() {
                   <Typography variant="h6" fontWeight={700}>
                     {format(selectedDate, "EEEE, MMMM d")}
                   </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {filteredEvents.length} events
-                    </Typography>
-                  </Box>
-                </Stack>
+                  <Typography variant="caption" color="text.secondary">
+                    {filteredEvents.length} events
+                  </Typography>
+                </Box>
+              </Stack>
 
-                {filteredEvents.length === 0 ? (
-                  <Box sx={{ textAlign: 'center', py: 4 }}>
-                    <Box sx={{ fontSize: 48, opacity: 0.3, mb: 2 }}>📅</Box>
-                    <Typography variant="body2" color="text.secondary">
-                      No events scheduled for this day
-                    </Typography>
-                  </Box>
-                ) : (
-                  <Stack spacing={2}>
-                    {filteredEvents.map((event, index) => (
-                      <Grow in={true} timeout={500 + index * 100} key={event.id}>
+              {filteredEvents.length === 0 ? (
+                <Box sx={{ textAlign: 'center', py: 4 }}>
+                  <Box sx={{ fontSize: 48, opacity: 0.3, mb: 2 }}>📅</Box>
+                  <Typography variant="body2" color="text.secondary">
+                    No events scheduled for this day
+                  </Typography>
+                </Box>
+              ) : (
+                <Stack spacing={2}>
+                  {filteredEvents.map((event, index) => (
+                    <Grow in={true} timeout={500 + index * 100} key={event.id}>
                         <Paper
                           sx={{
                             p: 2.5,
