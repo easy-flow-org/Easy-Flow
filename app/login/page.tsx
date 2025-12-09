@@ -16,7 +16,6 @@ import LockIcon from "@mui/icons-material/Lock";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import NextLink from "next/link";
-import ParticlesBackground from "../components/ParticlesBackground";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
