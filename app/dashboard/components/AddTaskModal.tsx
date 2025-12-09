@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react"
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, TextFieldProps, MenuItem, useMediaQuery } from "@mui/material";
-import { Task, TaskBase } from "@/types/types";
+import { Task } from "@/types/types";
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -11,7 +11,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 type ModalProps = {
   open: boolean
   close: () => void
-  addNewTask: (newTask: TaskBase) => void
+  addNewTask: (newTask: Task) => void
   initialTask?: Task | null
 }
 
@@ -73,12 +73,13 @@ export default function AddTaskModal(props: ModalProps) {
     const dueRaw = data.get('dueDate') as string | null
     const due = dueRaw ? new Date(dueRaw) : new Date()
 
-    const newTask: TaskBase = {
+    const newTask: Task = {
       id: props.initialTask?.id ?? crypto.randomUUID(),
       title: (data.get('title') as string) ?? '',
       notes: (data.get('notes') as string) ?? '',
       dueDate: due,
-      importance: (data.get('importance') as TaskBase['importance']) ?? 'Easy',
+      dueTime: dueTime,
+      importance: (data.get('importance') as Task['importance']) ?? 'Easy',
       completed: props.initialTask?.completed ?? false,
     }
 
