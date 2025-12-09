@@ -425,10 +425,6 @@ export default function PomodoroPage() {
       setGameScores(prev => ({
         ...prev,
         [scoreKey]: prev[scoreKey] + 1
-      const gameKey = activeGame === 'tic-tac-toe' ? 'ticTacToe' : activeGame === 'memory' ? 'memory' : 'diceRoll';
-      setGameScores(prev => ({
-        ...prev,
-        [gameKey]: prev[gameKey as keyof GameScore] + 1
       }));
     }
     setActiveGame(null);
