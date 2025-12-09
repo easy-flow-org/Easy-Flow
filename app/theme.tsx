@@ -5,7 +5,7 @@ import { PropsWithChildren } from "react";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#ffffff",
+      main: "#206cb9ff",
     },
     secondary: {
       main: "#f50057",
