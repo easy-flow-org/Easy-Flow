@@ -701,9 +701,15 @@ export default function PomodoroPage() {
   const completeGame = () => {
     setShowGameModal(false);
     if (activeGame) {
+      const gameKeyMap: Record<string, keyof GameScore> = {
+        'tic-tac-toe': 'ticTacToe',
+        'memory': 'memory',
+        'dice-roll': 'diceRoll'
+      };
+      const scoreKey = gameKeyMap[activeGame];
       setGameScores(prev => ({
         ...prev,
-        [activeGame]: prev[activeGame] + 1
+        [scoreKey]: prev[scoreKey] + 1
       }));
     }
     setActiveGame(null);
