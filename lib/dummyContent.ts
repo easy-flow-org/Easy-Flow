@@ -1,8 +1,8 @@
-import { Course, Task } from "@/types/types"
+import { Course, TaskBase } from "@/types/types"
 
 interface dummyContentTypes {
   courses: Course[]
-  tasks: Task[]
+  tasks: TaskBase[]
 }
 
 const dummyContent: dummyContentTypes = {
