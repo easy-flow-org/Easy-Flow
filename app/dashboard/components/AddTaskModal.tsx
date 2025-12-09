@@ -80,6 +80,10 @@ export default function AddTaskModal(props: ModalProps) {
       dueDate: due,
       importance: (data.get('importance') as Task['importance']) ?? 'Easy',
       completed: props.initialTask?.completed ?? false,
+      // The Task interface includes UI callbacks; provide no-op defaults here
+      onToggleComplete: () => {},
+      onEdit: () => {},
+      onDelete: () => {},
     }
 
     props.addNewTask(newTask)
