@@ -72,22 +72,12 @@ export default function AddTaskModal(props: ModalProps) {
     const data = new FormData(form)
     const dueRaw = data.get('dueDate') as string | null
     const due = dueRaw ? new Date(dueRaw) : new Date()
-    // Determine dueTime (HH:MM). Prefer explicit time input, otherwise extract from dueRaw.
-    const dueTimeFromTimeInput = (data.get('dueDate_time') as string | null) || null
-    let dueTime: string | undefined
-    if (dueTimeFromTimeInput) {
-      dueTime = dueTimeFromTimeInput
-    } else if (dueRaw) {
-      const m = (dueRaw as string).match(/T(\d{2}:\d{2})/)
-      dueTime = m ? m[1] : undefined
-    }
 
     const newTask: Task = {
       id: props.initialTask?.id ?? crypto.randomUUID(),
       title: (data.get('title') as string) ?? '',
       notes: (data.get('notes') as string) ?? '',
       dueDate: due,
-      dueTime: dueTime,
       importance: (data.get('importance') as Task['importance']) ?? 'Easy',
       completed: props.initialTask?.completed ?? false,
     }
