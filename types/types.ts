@@ -5,6 +5,7 @@ export interface Course {
   days: string;
   startTime: string;
   endTime: string;
+  notes?: string;
 }
 
 export interface TaskBase {

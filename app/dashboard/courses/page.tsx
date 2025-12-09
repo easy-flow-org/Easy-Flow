@@ -7,6 +7,7 @@ import to12Hour from "@/lib/to12Hour"
 import AddCourseModal from "../components/AddCourseModal"
 import { useAuth } from "@/app/context/authContext"
 import { getCourses, addCourse, updateCourse, deleteCourse } from "@/lib/firebase/courses"
+import { toast } from "react-toastify"
 
 export default function Courses() {
   const { user } = useAuth()
@@ -57,9 +58,11 @@ export default function Courses() {
       const isUpdate = courses.some((c) => c.id === newCourse.id)
       if (isUpdate) {
         await updateCourse(newCourse, user.uid)
+        toast.success("Course updated successfully!")
       } else {
         const newId = await addCourse(newCourse, user.uid)
         newCourse.id = newId
+        toast.success("Course added successfully!")
       }
       // Reload courses to get the latest data
       await loadCourses()
@@ -68,7 +71,7 @@ export default function Courses() {
       closeModal()
     } catch (error) {
       console.error("Error saving course:", error)
-      alert("Failed to save course. Please try again.")
+      toast.error("Failed to save course. Please try again.")
     }
   }
 
@@ -81,9 +84,10 @@ export default function Courses() {
       if (selected?.id === courseId) {
         setSelected(null)
       }
+      toast.success("Course deleted successfully!")
     } catch (error) {
       console.error("Error deleting course:", error)
-      alert("Failed to delete course. Please try again.")
+      toast.error("Failed to delete course. Please try again.")
     }
   }
 
@@ -134,7 +138,10 @@ export default function Courses() {
     <Box sx={{ display: "flex", gap: 2, width: "100%", p: 2 }}>
       {/* Left: course list */}
       <Paper variant="outlined" sx={{ width: { xs: "100%", md: 320 }, maxHeight: 640, overflow: "auto", p: 2 }}>
-        <Typography variant="h6" sx={{ mb: 1, pl: 1 }}>Courses</Typography>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
+          <Typography variant="h6" sx={{ pl: 1 }}>Courses</Typography>
+          <Button variant="contained" color="secondary" size="small" onClick={() => setShowAddCourseModal(true)} sx={{ textTransform: 'none' }}>Add</Button>
+        </Stack>
         <Divider />
         {courses.length === 0 ? (
           <Typography variant="body2" color="text.secondary" sx={{ mt: 2, pl: 1 }}>
@@ -189,7 +196,10 @@ export default function Courses() {
 
             <Divider sx={{ my: 2 }} />
 
-            <Typography variant="subtitle1" sx={{ mb: 1 }}>Details</Typography>
+            <Typography variant="subtitle1" sx={{ mb: 1 }}>Notes</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'pre-wrap' }}>{selected.notes ?? "No notes yet. Add some!"}</Typography>
+
+            <Divider sx={{ my: 2 }} />
             <Typography variant="body2">Days: {selected.days.replaceAll(",", ", ")}</Typography>
             <Typography variant="body2">Start: {to12Hour(selected.startTime)}</Typography>
             <Typography variant="body2">End: {to12Hour(selected.endTime)}</Typography>

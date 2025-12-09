@@ -25,6 +25,7 @@ interface Course {
   days: string;
   startTime: string;
   endTime: string;
+  notes?: string;
 }
 
 // Get all courses for the authenticated user
@@ -35,13 +36,12 @@ export const getCourses = functions.https.onCall(async (data, context) => {
     const snapshot = await db
       .collection("courses")
       .where("userId", "==", userId)
-      .orderBy("createdAt", "desc")
       .get();
 
     const courses = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
-    }));
+    })).sort((a: any, b: any) => (b.createdAt || 0) - (a.createdAt || 0));
 
     return { success: true, data: courses };
   } catch (error: any) {
@@ -72,6 +72,7 @@ export const addCourse = functions.https.onCall(async (data, context) => {
       days: course.days,
       startTime: course.startTime,
       endTime: course.endTime,
+      notes: course.notes || "",
       userId,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -122,6 +123,7 @@ export const updateCourse = functions.https.onCall(async (data, context) => {
       days: course.days,
       startTime: course.startTime,
       endTime: course.endTime,
+      notes: course.notes || "",
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
@@ -199,7 +201,6 @@ export const getTasks = functions.https.onCall(async (data, context) => {
     const snapshot = await db
       .collection("tasks")
       .where("userId", "==", userId)
-      .orderBy("dueDate", "asc")
       .get();
 
     const tasks = snapshot.docs.map((doc) => {
@@ -212,6 +213,10 @@ export const getTasks = functions.https.onCall(async (data, context) => {
         importance: data.importance || "Easy",
         completed: data.completed || false,
       };
+    }).sort((a: any, b: any) => {
+      const dateA = a.dueDate instanceof Date ? a.dueDate.getTime() : 0;
+      const dateB = b.dueDate instanceof Date ? b.dueDate.getTime() : 0;
+      return dateA - dateB;
     });
 
     return { success: true, data: tasks };
@@ -457,7 +462,6 @@ export const getPomodoroSessions = functions.https.onCall(
       const snapshot = await db
         .collection("pomodoroSessions")
         .where("userId", "==", userId)
-        .orderBy("timestamp", "desc")
         .get();
 
       const sessions = snapshot.docs.map((doc) => {
@@ -470,7 +474,7 @@ export const getPomodoroSessions = functions.https.onCall(
           completed: data.completed,
           timestamp: data.timestamp?.toDate() || new Date(),
         };
-      });
+      }).sort((a: any, b: any) => (b.timestamp?.getTime?.() || 0) - (a.timestamp?.getTime?.() || 0));
 
       return { success: true, data: sessions };
     } catch (error: any) {
