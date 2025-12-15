@@ -1,5 +1,5 @@
 import { getFunctions, httpsCallable } from "firebase/functions";
-import { Task } from "@/types/types";
+import { Task, TaskBase } from "@/types/types";
 
 // Initialize Firebase Functions
 const functions = getFunctions();
@@ -32,7 +32,7 @@ export const getTasks = async (userId: string): Promise<Task[]> => {
 };
 
 // Add a new task
-export const addTask = async (task: Task, userId: string): Promise<string> => {
+export const addTask = async (task: TaskBase, userId: string): Promise<string> => {
   try {
     const addTaskFunction = httpsCallable(functions, "addTask");
     const result = await addTaskFunction({ task });
@@ -48,7 +48,7 @@ export const addTask = async (task: Task, userId: string): Promise<string> => {
 };
 
 // Update an existing task
-export const updateTask = async (task: Task, userId: string): Promise<void> => {
+export const updateTask = async (task: TaskBase, userId: string): Promise<void> => {
   try {
     const updateTaskFunction = httpsCallable(functions, "updateTask");
     const result = await updateTaskFunction({ task });

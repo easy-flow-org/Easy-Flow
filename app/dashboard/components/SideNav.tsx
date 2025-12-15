@@ -36,9 +36,12 @@ import {
   Logout,
   Lightbulb,
   ExpandMore,
-  ExpandLess
+  ExpandLess,
+  DarkMode,
+  LightMode
 } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
+import { useThemeMode } from '../../context/ThemeContext';
 
 interface NavButtonProps {
   href: string;
@@ -166,6 +169,7 @@ function NavButton({
 // Mobile Navigation Bar
 function MobileNav({ onMenuClick }: { onMenuClick: () => void }) {
   const theme = useTheme();
+  const { mode, toggleTheme } = useThemeMode();
 
   return (
     <AppBar 
@@ -215,6 +219,15 @@ function MobileNav({ onMenuClick }: { onMenuClick: () => void }) {
         </Stack>
 
         <Stack direction="row" spacing={1} alignItems="center">
+          <IconButton 
+            size="small" 
+            onClick={toggleTheme}
+            sx={{ 
+              color: theme.palette.text.primary,
+            }}
+          >
+            {mode === 'dark' ? <LightMode /> : <DarkMode />}
+          </IconButton>
           <IconButton size="small" sx={{ 
             color: theme.palette.text.primary,
           }}>
@@ -223,7 +236,7 @@ function MobileNav({ onMenuClick }: { onMenuClick: () => void }) {
           <IconButton size="small" sx={{ 
             color: theme.palette.text.primary,
           }}>
-            <Badge badgeContent={3} color="error" size="small">
+            <Badge badgeContent={3} color="error">
               <Notifications />
             </Badge>
           </IconButton>
@@ -244,6 +257,7 @@ function MobileNav({ onMenuClick }: { onMenuClick: () => void }) {
 export default function SideNav() {
   const pathname = usePathname();
   const theme = useTheme();
+  const { mode, toggleTheme } = useThemeMode();
   const isMobile = useMediaQuery('(max-width: 1000px)');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
@@ -363,6 +377,20 @@ export default function SideNav() {
           </Stack>
           
           <Divider />
+          
+          <Button
+            fullWidth
+            startIcon={mode === 'dark' ? <LightMode /> : <DarkMode />}
+            onClick={toggleTheme}
+            sx={{
+              textTransform: 'none',
+              color: theme.palette.text.primary,
+              justifyContent: 'flex-start',
+              py: 1.5,
+            }}
+          >
+            {mode === 'dark' ? 'Light Mode' : 'Dark Mode'}
+          </Button>
           
           <Button
             fullWidth
@@ -562,22 +590,39 @@ export default function SideNav() {
                   <Person />
                 </Avatar>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography variant="body2" sx={{ 
+                  <Typography variant="body2" noWrap sx={{ 
                     color: theme.palette.text.primary,
                     fontWeight: 600,
-                    noWrap: true,
                   }}>
                     Student Account
                   </Typography>
-                  <Typography variant="caption" sx={{ 
+                  <Typography variant="caption" noWrap sx={{ 
                     color: theme.palette.text.secondary,
                     display: 'block',
-                    noWrap: true,
                   }}>
                     student@university.edu
                   </Typography>
                 </Box>
               </Stack>
+
+              <Button
+                fullWidth
+                startIcon={mode === 'dark' ? <LightMode /> : <DarkMode />}
+                onClick={toggleTheme}
+                sx={{
+                  textTransform: 'none',
+                  color: theme.palette.text.primary,
+                  justifyContent: 'flex-start',
+                  py: 1.2,
+                  borderRadius: 2,
+                  mb: 1,
+                  '&:hover': {
+                    background: alpha(theme.palette.action.hover, 0.3),
+                  }
+                }}
+              >
+                {mode === 'dark' ? 'Light Mode' : 'Dark Mode'}
+              </Button>
 
               <Button
                 fullWidth

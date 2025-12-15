@@ -10,7 +10,7 @@ import FocusChart from "./components/FocusChart";
 import Link from "next/link";
 import AddCourseModal from "./components/AddCourseModal";
 import { useState, useEffect } from "react";
-import { Course, Task } from "@/types/types";
+import { Course, Task, TaskBase } from "@/types/types";
 import AddTaskModal from "./components/AddTaskModal";
 import { useAuth } from "@/app/context/authContext";
 import { getCourses, addCourse } from "@/lib/firebase/courses";

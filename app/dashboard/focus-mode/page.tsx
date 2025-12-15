@@ -50,15 +50,25 @@ import Grid3x3Icon from '@mui/icons-material/Grid3x3';
 import MemoryIcon from '@mui/icons-material/Memory';
 import CasinoIcon from '@mui/icons-material/Casino';
 import SettingsIcon from '@mui/icons-material/Settings';
+import TextFieldsIcon from '@mui/icons-material/TextFields';
+import CalculateIcon from '@mui/icons-material/Calculate';
+import SpeedIcon from '@mui/icons-material/Speed';
+import RepeatIcon from '@mui/icons-material/Repeat';
+import NumbersIcon from '@mui/icons-material/Numbers';
 import { useState, useEffect, useRef } from "react";
 
 type TimerMode = 'work' | 'shortBreak' | 'longBreak';
-type GameType = 'tic-tac-toe' | 'memory' | 'dice-roll' | null;
+type GameType = 'tic-tac-toe' | 'memory' | 'dice-roll' | 'word-scramble' | 'quick-math' | 'reaction-time' | 'pattern-memory' | 'number-sequence' | null;
 
 interface GameScore {
   ticTacToe: number;
   memory: number;
   diceRoll: number;
+  wordScramble: number;
+  quickMath: number;
+  reactionTime: number;
+  patternMemory: number;
+  numberSequence: number;
 }
 
 const TIMER_SETTINGS = {
@@ -325,6 +335,471 @@ const DiceRollGame = ({ onComplete }: { onComplete: () => void }) => {
   );
 };
 
+// Mini-game: Word Scramble
+const WordScrambleGame = ({ onComplete }: { onComplete: () => void }) => {
+  const words = ['FOCUS', 'BREAK', 'TIMER', 'GAME', 'RELAX', 'ENERGY', 'MIND', 'PEACE'];
+  const [currentWord, setCurrentWord] = useState('');
+  const [scrambled, setScrambled] = useState('');
+  const [input, setInput] = useState('');
+  const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    const newWord = words[Math.floor(Math.random() * words.length)];
+    setCurrentWord(newWord);
+    setScrambled(newWord.split('').sort(() => Math.random() - 0.5).join(''));
+    setInput('');
+    setMessage('');
+  }, [score]);
+
+  useEffect(() => {
+    if (timeLeft > 0) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else {
+      setTimeout(() => onComplete(), 1500);
+    }
+  }, [timeLeft, onComplete]);
+
+  const handleSubmit = () => {
+    if (input.toUpperCase() === currentWord) {
+      setScore(score + 1);
+      setMessage('✅ Correct!');
+      setTimeout(() => setMessage(''), 1000);
+    } else {
+      setMessage('❌ Try again!');
+      setTimeout(() => setMessage(''), 1000);
+    }
+  };
+
+  return (
+    <Box sx={{ p: 3, textAlign: 'center' }}>
+      <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+        Word Scramble
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        Time: {timeLeft}s | Score: {score}
+      </Typography>
+      
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h4" sx={{ 
+          letterSpacing: 3, 
+          mb: 2,
+          fontFamily: 'monospace',
+          color: 'primary.main'
+        }}>
+          {scrambled}
+        </Typography>
+        <TextField
+          fullWidth
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
+          placeholder="Unscramble the word"
+          sx={{ mb: 2 }}
+        />
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={!input}
+        >
+          Submit
+        </Button>
+      </Box>
+
+      {message && (
+        <Typography variant="body1" color={message.includes('✅') ? 'success.main' : 'error.main'}>
+          {message}
+        </Typography>
+      )}
+    </Box>
+  );
+};
+
+// Mini-game: Quick Math
+const QuickMathGame = ({ onComplete }: { onComplete: () => void }) => {
+  const [num1, setNum1] = useState(0);
+  const [num2, setNum2] = useState(0);
+  const [operator, setOperator] = useState<'+' | '-' | '*' | '/'>('+');
+  const [answer, setAnswer] = useState('');
+  const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [message, setMessage] = useState('');
+
+  const generateQuestion = () => {
+    const ops = ['+', '-', '*'] as const;
+    const op = ops[Math.floor(Math.random() * ops.length)];
+    const n1 = Math.floor(Math.random() * 20) + 1;
+    const n2 = op === '*' ? Math.floor(Math.random() * 10) + 1 : Math.floor(Math.random() * 20) + 1;
+    setNum1(n1);
+    setNum2(n2);
+    setOperator(op);
+    setAnswer('');
+    setMessage('');
+  };
+
+  useEffect(() => {
+    generateQuestion();
+  }, [score]);
+
+  useEffect(() => {
+    if (timeLeft > 0) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else {
+      setTimeout(() => onComplete(), 1500);
+    }
+  }, [timeLeft, onComplete]);
+
+  const calculateAnswer = () => {
+    let correct: number;
+    switch (operator) {
+      case '+': correct = num1 + num2; break;
+      case '-': correct = num1 - num2; break;
+      case '*': correct = num1 * num2; break;
+      default: correct = 0;
+    }
+
+    if (parseInt(answer) === correct) {
+      setScore(score + 1);
+      setMessage('✅ Correct!');
+      setTimeout(() => {
+        setMessage('');
+        generateQuestion();
+      }, 1000);
+    } else {
+      setMessage('❌ Try again!');
+      setTimeout(() => setMessage(''), 1000);
+    }
+  };
+
+  return (
+    <Box sx={{ p: 3, textAlign: 'center' }}>
+      <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+        Quick Math
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        Time: {timeLeft}s | Score: {score}
+      </Typography>
+      
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h3" sx={{ mb: 3, fontFamily: 'monospace' }}>
+          {num1} {operator === '*' ? '×' : operator === '/' ? '÷' : operator} {num2} = ?
+        </Typography>
+        <TextField
+          fullWidth
+          type="number"
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && calculateAnswer()}
+          placeholder="Your answer"
+          sx={{ mb: 2 }}
+        />
+        <Button
+          variant="contained"
+          onClick={calculateAnswer}
+          disabled={!answer}
+        >
+          Submit
+        </Button>
+      </Box>
+
+      {message && (
+        <Typography variant="body1" color={message.includes('✅') ? 'success.main' : 'error.main'}>
+          {message}
+        </Typography>
+      )}
+    </Box>
+  );
+};
+
+// Mini-game: Reaction Time
+const ReactionTimeGame = ({ onComplete }: { onComplete: () => void }) => {
+  const [waiting, setWaiting] = useState(true);
+  const [showClick, setShowClick] = useState(false);
+  const [reactionTime, setReactionTime] = useState<number | null>(null);
+  const [startTime, setStartTime] = useState(0);
+  const [rounds, setRounds] = useState(0);
+  const [averageTime, setAverageTime] = useState(0);
+  const [times, setTimes] = useState<number[]>([]);
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    if (waiting && !showClick) {
+      const delay = Math.random() * 3000 + 2000; // 2-5 seconds
+      const timer = setTimeout(() => {
+        setShowClick(true);
+        setStartTime(Date.now());
+      }, delay);
+      return () => clearTimeout(timer);
+    }
+  }, [waiting, showClick]);
+
+  const handleClick = () => {
+    if (!showClick) {
+      setWaiting(false);
+      setMessage('⏱️ Too early! Wait for green.');
+      setTimeout(() => {
+        setWaiting(true);
+        setMessage('');
+      }, 2000);
+      return;
+    }
+
+    const time = Date.now() - startTime;
+    setReactionTime(time);
+    setTimes([...times, time]);
+    const avg = [...times, time].reduce((a, b) => a + b, 0) / (times.length + 1);
+    setAverageTime(avg);
+    setRounds(rounds + 1);
+
+    if (rounds >= 4) {
+      setTimeout(() => onComplete(), 2000);
+    } else {
+      setTimeout(() => {
+        setWaiting(true);
+        setShowClick(false);
+        setReactionTime(null);
+      }, 2000);
+    }
+  };
+
+  return (
+    <Box sx={{ p: 3, textAlign: 'center' }}>
+      <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+        Reaction Time Test
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        Round {rounds + 1}/5 | Avg: {averageTime > 0 ? `${Math.round(averageTime)}ms` : '---'}
+      </Typography>
+      
+      <Box sx={{ mb: 3 }}>
+        <Button
+          variant="contained"
+          onClick={handleClick}
+          sx={{
+            width: 200,
+            height: 200,
+            borderRadius: '50%',
+            fontSize: '1.5rem',
+            bgcolor: showClick ? 'success.main' : waiting ? 'error.main' : 'grey.400',
+            '&:hover': {
+              bgcolor: showClick ? 'success.dark' : waiting ? 'error.dark' : 'grey.500',
+            }
+          }}
+        >
+          {showClick ? 'CLICK NOW!' : waiting ? 'Wait...' : 'Too Early!'}
+        </Button>
+      </Box>
+
+      {reactionTime && (
+        <Typography variant="h6" color="primary">
+          {reactionTime}ms
+        </Typography>
+      )}
+
+      {message && (
+        <Typography variant="body1" color="warning.main" sx={{ mt: 2 }}>
+          {message}
+        </Typography>
+      )}
+    </Box>
+  );
+};
+
+// Mini-game: Pattern Memory (Simon Says)
+const PatternMemoryGame = ({ onComplete }: { onComplete: () => void }) => {
+  const [sequence, setSequence] = useState<number[]>([]);
+  const [userSequence, setUserSequence] = useState<number[]>([]);
+  const [isShowing, setIsShowing] = useState(false);
+  const [level, setLevel] = useState(1);
+  const [message, setMessage] = useState('Watch the pattern...');
+
+  useEffect(() => {
+    if (sequence.length === 0) {
+      startNewLevel();
+    }
+  }, []);
+
+  const startNewLevel = () => {
+    const newSequence = [...sequence, Math.floor(Math.random() * 4)];
+    setSequence(newSequence);
+    setIsShowing(true);
+    setMessage('Watch the pattern...');
+    
+    let index = 0;
+    const showInterval = setInterval(() => {
+      if (index < newSequence.length) {
+        setMessage(`Showing ${index + 1}/${newSequence.length}...`);
+        index++;
+      } else {
+        clearInterval(showInterval);
+        setIsShowing(false);
+        setUserSequence([]);
+        setMessage('Now repeat the pattern!');
+      }
+    }, 1000);
+  };
+
+  const handleColorClick = (colorIndex: number) => {
+    if (isShowing) return;
+
+    const newUserSequence = [...userSequence, colorIndex];
+    setUserSequence(newUserSequence);
+
+    if (newUserSequence[newUserSequence.length - 1] !== sequence[newUserSequence.length - 1]) {
+      setMessage('❌ Wrong! Game Over');
+      setTimeout(() => onComplete(), 2000);
+      return;
+    }
+
+    if (newUserSequence.length === sequence.length) {
+      setLevel(level + 1);
+      setMessage(`✅ Level ${level + 1}!`);
+      setTimeout(() => {
+        startNewLevel();
+      }, 1500);
+    }
+  };
+
+  const colors = ['#f44336', '#2196f3', '#4caf50', '#ffeb3b'];
+
+  return (
+    <Box sx={{ p: 3, textAlign: 'center' }}>
+      <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+        Pattern Memory
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        Level: {level}
+      </Typography>
+      
+      <Typography variant="body1" sx={{ mb: 3, minHeight: 24 }}>
+        {message}
+      </Typography>
+
+      <Box sx={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(2, 1fr)', 
+        gap: 2,
+        maxWidth: 300,
+        mx: 'auto'
+      }}>
+        {colors.map((color, index) => (
+          <Button
+            key={index}
+            onClick={() => handleColorClick(index)}
+            disabled={isShowing}
+            sx={{
+              aspectRatio: '1',
+              bgcolor: color,
+              opacity: isShowing && sequence.includes(index) ? 1 : 0.7,
+              '&:hover': { bgcolor: color, opacity: 1 },
+              '&:disabled': { opacity: 0.5 }
+            }}
+          />
+        ))}
+      </Box>
+    </Box>
+  );
+};
+
+// Mini-game: Number Sequence
+const NumberSequenceGame = ({ onComplete }: { onComplete: () => void }) => {
+  const [sequence, setSequence] = useState<number[]>([]);
+  const [answer, setAnswer] = useState('');
+  const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [message, setMessage] = useState('');
+
+  const generateSequence = () => {
+    const patterns = [
+      { start: 2, step: 2, length: 4 }, // 2, 4, 6, 8, ?
+      { start: 1, step: 3, length: 4 }, // 1, 4, 7, 10, ?
+      { start: 5, step: 5, length: 4 }, // 5, 10, 15, 20, ?
+      { start: 3, step: 4, length: 4 }, // 3, 7, 11, 15, ?
+    ];
+    const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+    const seq: number[] = [];
+    for (let i = 0; i < pattern.length; i++) {
+      seq.push(pattern.start + i * pattern.step);
+    }
+    setSequence(seq);
+    setAnswer('');
+    setMessage('');
+  };
+
+  useEffect(() => {
+    generateSequence();
+  }, [score]);
+
+  useEffect(() => {
+    if (timeLeft > 0) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else {
+      setTimeout(() => onComplete(), 1500);
+    }
+  }, [timeLeft, onComplete]);
+
+  const handleSubmit = () => {
+    const correct = sequence[sequence.length - 1] + (sequence[1] - sequence[0]);
+    if (parseInt(answer) === correct) {
+      setScore(score + 1);
+      setMessage('✅ Correct!');
+      setTimeout(() => {
+        setMessage('');
+        generateSequence();
+      }, 1000);
+    } else {
+      setMessage(`❌ Wrong! The answer is ${correct}`);
+      setTimeout(() => {
+        setMessage('');
+        generateSequence();
+      }, 2000);
+    }
+  };
+
+  return (
+    <Box sx={{ p: 3, textAlign: 'center' }}>
+      <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+        Number Sequence
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        Time: {timeLeft}s | Score: {score}
+      </Typography>
+      
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h4" sx={{ mb: 3, fontFamily: 'monospace' }}>
+          {sequence.join(', ')} , ?
+        </Typography>
+        <TextField
+          fullWidth
+          type="number"
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
+          placeholder="Next number"
+          sx={{ mb: 2 }}
+        />
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={!answer}
+        >
+          Submit
+        </Button>
+      </Box>
+
+      {message && (
+        <Typography variant="body1" color={message.includes('✅') ? 'success.main' : 'error.main'}>
+          {message}
+        </Typography>
+      )}
+    </Box>
+  );
+};
+
 export default function PomodoroPage() {
   const theme = useTheme();
   const [mode, setMode] = useState<TimerMode>('work');
@@ -336,7 +811,12 @@ export default function PomodoroPage() {
   const [gameScores, setGameScores] = useState<GameScore>({
     ticTacToe: 0,
     memory: 0,
-    diceRoll: 0
+    diceRoll: 0,
+    wordScramble: 0,
+    quickMath: 0,
+    reactionTime: 0,
+    patternMemory: 0,
+    numberSequence: 0
   });
   const [showInstructions, setShowInstructions] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -419,13 +899,20 @@ export default function PomodoroPage() {
       const gameKeyMap: Record<string, keyof GameScore> = {
         'tic-tac-toe': 'ticTacToe',
         'memory': 'memory',
-        'dice-roll': 'diceRoll'
+        'dice-roll': 'diceRoll',
+        'word-scramble': 'wordScramble',
+        'quick-math': 'quickMath',
+        'reaction-time': 'reactionTime',
+        'pattern-memory': 'patternMemory',
+        'number-sequence': 'numberSequence'
       };
       const scoreKey = gameKeyMap[activeGame];
-      setGameScores(prev => ({
-        ...prev,
-        [scoreKey]: prev[scoreKey] + 1
-      }));
+      if (scoreKey) {
+        setGameScores(prev => ({
+          ...prev,
+          [scoreKey]: prev[scoreKey] + 1
+        }));
+      }
     }
     setActiveGame(null);
   };
@@ -761,6 +1248,41 @@ export default function PomodoroPage() {
                               score: gameScores.diceRoll,
                               color: theme.palette.success.main 
                             },
+                            { 
+                              type: 'word-scramble' as GameType, 
+                              label: 'Word Scramble', 
+                              icon: <TextFieldsIcon />,
+                              score: gameScores.wordScramble,
+                              color: theme.palette.info.main 
+                            },
+                            { 
+                              type: 'quick-math' as GameType, 
+                              label: 'Quick Math', 
+                              icon: <CalculateIcon />,
+                              score: gameScores.quickMath,
+                              color: theme.palette.warning.main 
+                            },
+                            { 
+                              type: 'reaction-time' as GameType, 
+                              label: 'Reaction Time', 
+                              icon: <SpeedIcon />,
+                              score: gameScores.reactionTime,
+                              color: theme.palette.error.main 
+                            },
+                            { 
+                              type: 'pattern-memory' as GameType, 
+                              label: 'Pattern Memory', 
+                              icon: <RepeatIcon />,
+                              score: gameScores.patternMemory,
+                              color: theme.palette.purple?.main || theme.palette.secondary.main 
+                            },
+                            { 
+                              type: 'number-sequence' as GameType, 
+                              label: 'Number Sequence', 
+                              icon: <NumbersIcon />,
+                              score: gameScores.numberSequence,
+                              color: theme.palette.info.dark 
+                            },
                           ]).map((game) => (
                             <Button
                               key={game.type}
@@ -900,10 +1422,15 @@ export default function PomodoroPage() {
               </Typography>
             </Box>
 
-            <Box sx={{ p: 3 }}>
+            <Box sx={{ p: 3, maxHeight: '70vh', overflowY: 'auto' }}>
               {activeGame === 'tic-tac-toe' && <TicTacToeGame onComplete={completeGame} />}
               {activeGame === 'memory' && <MemoryGame onComplete={completeGame} />}
               {activeGame === 'dice-roll' && <DiceRollGame onComplete={completeGame} />}
+              {activeGame === 'word-scramble' && <WordScrambleGame onComplete={completeGame} />}
+              {activeGame === 'quick-math' && <QuickMathGame onComplete={completeGame} />}
+              {activeGame === 'reaction-time' && <ReactionTimeGame onComplete={completeGame} />}
+              {activeGame === 'pattern-memory' && <PatternMemoryGame onComplete={completeGame} />}
+              {activeGame === 'number-sequence' && <NumberSequenceGame onComplete={completeGame} />}
               
               {!activeGame && (
                 <Stack spacing={2}>
@@ -938,6 +1465,56 @@ export default function PomodoroPage() {
                     sx={{ py: 1.5, borderRadius: 2 }}
                   >
                     Dice Roll Challenge
+                  </Button>
+                  <Button 
+                    fullWidth 
+                    variant="contained" 
+                    color="info"
+                    onClick={() => startGame('word-scramble')}
+                    startIcon={<TextFieldsIcon />}
+                    sx={{ py: 1.5, borderRadius: 2 }}
+                  >
+                    Word Scramble
+                  </Button>
+                  <Button 
+                    fullWidth 
+                    variant="contained" 
+                    color="warning"
+                    onClick={() => startGame('quick-math')}
+                    startIcon={<CalculateIcon />}
+                    sx={{ py: 1.5, borderRadius: 2 }}
+                  >
+                    Quick Math
+                  </Button>
+                  <Button 
+                    fullWidth 
+                    variant="contained" 
+                    color="error"
+                    onClick={() => startGame('reaction-time')}
+                    startIcon={<SpeedIcon />}
+                    sx={{ py: 1.5, borderRadius: 2 }}
+                  >
+                    Reaction Time
+                  </Button>
+                  <Button 
+                    fullWidth 
+                    variant="contained" 
+                    color="secondary"
+                    onClick={() => startGame('pattern-memory')}
+                    startIcon={<RepeatIcon />}
+                    sx={{ py: 1.5, borderRadius: 2 }}
+                  >
+                    Pattern Memory
+                  </Button>
+                  <Button 
+                    fullWidth 
+                    variant="contained" 
+                    color="info"
+                    onClick={() => startGame('number-sequence')}
+                    startIcon={<NumbersIcon />}
+                    sx={{ py: 1.5, borderRadius: 2 }}
+                  >
+                    Number Sequence
                   </Button>
                   <Button 
                     fullWidth 

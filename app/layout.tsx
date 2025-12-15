@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { AuthProvider } from "./context/authContext";
-import Theme from "./theme";
+import { ThemeProvider } from "./context/ThemeContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -16,11 +16,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Theme>
+        <ThemeProvider>
           <AuthProvider>
             {children}
           </AuthProvider>
-        </Theme>
+        </ThemeProvider>
       </body>
     </html>
   );

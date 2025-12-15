@@ -46,7 +46,7 @@ import {
   Lightbulb,
   KeyboardDoubleArrowDown
 } from "@mui/icons-material"
-import { Task } from "@/types/types"
+import { Task, TaskBase } from "@/types/types"
 import AddTaskModal from "../components/AddTaskModal"
 import { useAuth } from "@/app/context/authContext"
 import { getTasks, addTask, updateTask, deleteTask, toggleTaskComplete } from "@/lib/firebase/tasks"
@@ -165,7 +165,7 @@ export default function TasksPage() {
     setShowModal(false)
   }
 
-  const addOrUpdateTask = async (task: Task) => {
+  const addOrUpdateTask = async (task: TaskBase) => {
     if (!user) return
     try {
       const isUpdate = tasks.some((t) => t.id === task.id)
@@ -174,7 +174,6 @@ export default function TasksPage() {
         toast.success("Task updated successfully!")
       } else {
         const newId = await addTask(task, user.uid)
-        task.id = newId
         toast.success("Task created successfully!")
       }
       await loadTasks()
@@ -205,10 +204,10 @@ export default function TasksPage() {
     try {
       await deleteTask(id)
       await loadTasks()
-      toast.success("Task archived successfully!")
+      toast.success("Task deleted successfully!")
     } catch (error) {
       console.error("Error deleting task:", error)
-      toast.error("Failed to archive task. Please try again.")
+      toast.error("Failed to delete task. Please try again.")
     }
   }
 
@@ -720,9 +719,9 @@ export default function TasksPage() {
                       </MenuItem>
                       <MenuItem onClick={() => { removeTask(task.id); handleTaskMenuClose() }}>
                         <ListItemIcon>
-                          <Archive fontSize="small" />
+                          <Delete fontSize="small" />
                         </ListItemIcon>
-                        Archive
+                        Delete
                       </MenuItem>
                     </Menu>
                   </Stack>

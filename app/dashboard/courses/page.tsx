@@ -8,16 +8,19 @@ import {
   Tabs, Tab, Skeleton, Tooltip, Menu, MenuItem, ListItemIcon,
   Alert, AlertTitle, Badge
 } from "@mui/material"
-import { Course } from "@/types/types"
+import { Course, ParsedCourseData, ParsedTaskData } from "@/types/types"
 import to12Hour from "@/lib/to12Hour"
 import AddCourseModal from "../components/AddCourseModal"
+import SyllabusUploader from "@/components/SyllabusUploader"
 import { useAuth } from "@/app/context/authContext"
 import { getCourses, addCourse, updateCourse, deleteCourse } from "@/lib/firebase/courses"
+import { addTask } from "@/lib/firebase/tasks"
 import { toast } from "react-toastify"
 import {
   Add, Edit, Delete, School, CalendarMonth, AccessTime,
   Book, Notes, MoreVert, Search, FilterList, Sort,
-  TrendingUp, Groups, Schedule, Today, Close
+  TrendingUp, Groups, Schedule, Today, Close,
+  Upload, Description
 } from "@mui/icons-material"
 
 export default function Courses() {
@@ -31,9 +34,11 @@ export default function Courses() {
   const [activeTab, setActiveTab] = useState("all")
   const [sortBy, setSortBy] = useState<"title" | "days" | "time">("title")
   const [showAddCourseModal, setShowAddCourseModal] = useState(false)
+  const [showSyllabusUploader, setShowSyllabusUploader] = useState(false)
   const [editingCourse, setEditingCourse] = useState<Course | null>(null)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [selectedForMenu, setSelectedForMenu] = useState<Course | null>(null)
+  const [aiImportCount, setAiImportCount] = useState(0) // Track AI imports
 
   useEffect(() => {
     if (user) {
@@ -125,6 +130,78 @@ export default function Courses() {
     }
   }
 
+  const handleSyllabusParsed = async (courseData: ParsedCourseData, tasksData: ParsedTaskData[]) => {
+    try {
+      if (!user) return
+
+      // Create course from parsed data
+      const newCourse: Course = {
+        id: '',
+        title: courseData.title || 'Untitled Course',
+        days: courseData.days || '',
+        startTime: courseData.startTime || '09:00',
+        endTime: courseData.endTime || '10:00',
+        description: courseData.description || '',
+        notes: courseData.notes || '',
+      }
+
+      // Save the course
+      const courseId = await addCourse(newCourse, user.uid)
+      newCourse.id = courseId
+
+      // Create tasks from parsed data
+      if (tasksData.length > 0) {
+        const taskPromises = tasksData.map(async (taskData) => {
+          const task = {
+            id: '',
+            title: taskData.title,
+            notes: taskData.description || '',
+            dueDate: taskData.dueDate,
+            importance: taskData.importance,
+            completed: false,
+          }
+          return await addTask(task, user.uid)
+        })
+
+        await Promise.all(taskPromises)
+      }
+
+      // Refresh courses and select the new one
+      await loadCourses()
+      setSelected(newCourse)
+      setAiImportCount(prev => prev + 1)
+      
+      toast.success(`Course and ${tasksData.length} assignments added from syllabus!`)
+    } catch (error) {
+      console.error("Error saving parsed data:", error)
+      toast.error("Failed to save parsed data. Please try again.")
+    }
+  }
+
+  const addMultipleTasks = async (tasksData: ParsedTaskData[]) => {
+    if (!user) return
+    
+    try {
+      const taskPromises = tasksData.map(async (taskData) => {
+        const task = {
+          id: '',
+          title: taskData.title,
+          notes: taskData.description || '',
+          dueDate: taskData.dueDate,
+          importance: taskData.importance,
+          completed: false,
+        }
+        return await addTask(task, user.uid)
+      })
+
+      await Promise.all(taskPromises)
+      toast.success(`${tasksData.length} tasks imported successfully!`)
+    } catch (error) {
+      console.error("Error importing tasks:", error)
+      toast.error("Failed to import tasks")
+    }
+  }
+
   const handleDeleteCourse = async (courseId: string) => {
     if (!user) return
     try {
@@ -133,10 +210,10 @@ export default function Courses() {
       if (selected?.id === courseId) {
         setSelected(null)
       }
-      toast.success("Course archived successfully!")
+      toast.success("Course deleted successfully!")
     } catch (error) {
       console.error("Error deleting course:", error)
-      toast.error("Failed to archive course. Please try again.")
+      toast.error("Failed to delete course. Please try again.")
     }
   }
 
@@ -258,27 +335,45 @@ export default function Courses() {
               </Stack>
             </Box>
 
-            <Button
-              variant="contained"
-              color="secondary"
-              startIcon={<Add />}
-              onClick={() => setShowAddCourseModal(true)}
-              sx={{
-                textTransform: 'none',
-                px: 4,
-                py: 1.5,
-                borderRadius: 3,
-                background: `linear-gradient(135deg, ${theme.palette.secondary.main}, ${theme.palette.secondary.dark})`,
-                boxShadow: `0 8px 32px ${alpha(theme.palette.secondary.main, 0.3)}`,
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-2px)',
-                  boxShadow: `0 12px 40px ${alpha(theme.palette.secondary.main, 0.4)}`,
-                }
-              }}
-            >
-              New Course
-            </Button>
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Button
+                variant="outlined"
+                startIcon={<Upload />}
+                onClick={() => setShowSyllabusUploader(true)}
+                sx={{
+                  textTransform: 'none',
+                  borderRadius: 3,
+                  borderColor: alpha(theme.palette.primary.main, 0.3),
+                  '&:hover': {
+                    borderColor: theme.palette.primary.main,
+                    background: alpha(theme.palette.primary.main, 0.05),
+                  }
+                }}
+              >
+                Import Syllabus
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                startIcon={<Add />}
+                onClick={() => setShowAddCourseModal(true)}
+                sx={{
+                  textTransform: 'none',
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: 3,
+                  background: `linear-gradient(135deg, ${theme.palette.secondary.main}, ${theme.palette.secondary.dark})`,
+                  boxShadow: `0 8px 32px ${alpha(theme.palette.secondary.main, 0.3)}`,
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: `0 12px 40px ${alpha(theme.palette.secondary.main, 0.4)}`,
+                  }
+                }}
+              >
+                New Course
+              </Button>
+            </Stack>
           </Stack>
         </Box>
       </Fade>
@@ -373,14 +468,14 @@ export default function Courses() {
                 background: alpha(theme.palette.success.main, 0.1),
                 color: theme.palette.success.main,
               }}>
-                <TrendingUp fontSize="medium" />
+                <Description fontSize="medium" />
               </Box>
               <Box>
                 <Typography variant="h3" fontWeight={800}>
-                  {courses.filter(c => c.description && c.description.length > 0).length}
+                  {aiImportCount}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  With Details
+                  AI Syllabus Imports
                 </Typography>
               </Box>
             </Stack>
@@ -783,11 +878,17 @@ export default function Courses() {
               <ListItemIcon>
                 <Delete fontSize="small" />
               </ListItemIcon>
-              Archive Course
+              Delete Course
             </MenuItem>
           </>
         )}
       </Menu>
+
+      <SyllabusUploader
+        open={showSyllabusUploader}
+        onClose={() => setShowSyllabusUploader(false)}
+        onParsed={handleSyllabusParsed}
+      />
 
       <AddCourseModal 
         open={showAddCourseModal} 
