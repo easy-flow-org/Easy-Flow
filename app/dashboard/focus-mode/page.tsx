@@ -1274,7 +1274,7 @@ export default function PomodoroPage() {
                               label: 'Pattern Memory', 
                               icon: <RepeatIcon />,
                               score: gameScores.patternMemory,
-                              color: theme.palette.purple?.main || theme.palette.secondary.main 
+                              color: theme.palette.secondary.main 
                             },
                             { 
                               type: 'number-sequence' as GameType, 
